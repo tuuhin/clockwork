@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:stopwatch/app/app.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context) => MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        body: Center(
-            child: Text('It will be a clock app ',
-                style: Theme.of(context).textTheme.subtitle2)),
-      ),
-    );
-  }
+          primarySwatch: Colors.blue,
+          textTheme: GoogleFonts.sourceSansProTextTheme()),
+      home: const App());
 }
