@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stopwatch/app/tabs/tabs.dart';
+import 'package:stopwatch/app/widgets/app_drawer.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -60,16 +61,22 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: const AppDrawer(),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10),
-              child: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.settings, size: 30, color: Colors.black),
-              ),
+              child: Builder(builder: (context) {
+                return IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon:
+                      const Icon(Icons.settings, size: 30, color: Colors.black),
+                );
+              }),
             )
           ],
           bottom: TabBar(
@@ -95,18 +102,8 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               color: _currentIndex == index
-                                  ? const Color.fromARGB(255, 173, 173, 173)
+                                  ? const Color.fromARGB(255, 220, 220, 220)
                                   : null,
-                              boxShadow: _currentIndex == index
-                                  ? const [
-                                      BoxShadow(
-                                          color: Color.fromARGB(
-                                              255, 210, 210, 210),
-                                          offset: Offset(1, 1),
-                                          blurRadius: 2.0,
-                                          spreadRadius: 1),
-                                    ]
-                                  : [],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
