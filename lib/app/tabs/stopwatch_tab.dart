@@ -1,31 +1,66 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:stopwatch/app/widgets/app_widgets.dart';
+import 'package:stopwatch/app/widgets/stopwatch/lap_cards.dart';
+import 'package:stopwatch/context/context.dart';
 import 'package:vector_math/vector_math.dart' show radians;
 
 class StopwatchTab extends StatefulWidget {
-  const StopwatchTab({
-    Key? key,
-  }) : super(key: key);
+  const StopwatchTab({Key? key}) : super(key: key);
 
   @override
   State<StopwatchTab> createState() => _StopwatchTabState();
 }
 
-class _StopwatchTabState extends State<StopwatchTab> {
-  late DateTime _currentTime;
+class _StopwatchTabState extends State<StopwatchTab>
+    with SingleTickerProviderStateMixin {
+  late Animation<double> _rotate;
+
+  late AnimationController _animationController;
+  late StopWatchContext _stopWatchContext;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _stopWatchContext = Provider.of<StopWatchContext>(context);
+  }
 
   @override
   void initState() {
     super.initState();
-    _currentTime = DateTime.now();
+
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 20));
+    _rotate = Tween<double>(
+      begin: 0.0,
+      end: 360,
+    ).animate(_animationController);
+
+    _animationController.addListener(() {
+      if (_animationController.isCompleted) {
+        _animationController.repeat();
+      }
+    });
   }
 
-  void _onTap([bool start = true]) {}
+  void _onTap() {
+    _stopWatchContext.startTheWatch();
+  }
+
+  void _onReset() {
+    _stopWatchContext.stopTheWatch();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
+    final StopWatchTime _time = Provider.of<StopWatchTime>(context);
     return Scaffold(
       body: Column(
         children: [
@@ -37,26 +72,59 @@ class _StopwatchTabState extends State<StopwatchTab> {
               alignment: Alignment.center,
               children: [
                 SizedBox.square(
-                  dimension: _size.width * 0.65,
+                  dimension: _size.width * .67,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.white,
-                            offset: Offset(-1, -1),
-                            blurRadius: 20,
-                            spreadRadius: 3),
-                        BoxShadow(
-                            color: Color.fromARGB(255, 220, 220, 220),
-                            offset: Offset(1, 1),
-                            blurRadius: 20,
-                            spreadRadius: 3)
-                      ],
-                    ),
-                    child: CustomPaint(
-                      foregroundPainter: ClockPainer(),
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.white,
+                              offset: Offset(-10, -10),
+                              blurRadius: 20,
+                              spreadRadius: 2),
+                          BoxShadow(
+                              color: Color.fromARGB(255, 205, 205, 205),
+                              offset: Offset(20, 20),
+                              blurRadius: 50,
+                              spreadRadius: 2)
+                        ]),
+                  ),
+                ),
+                AnimatedBuilder(
+                  animation: _animationController,
+                  builder: (context, child) {
+                    return Transform.rotate(
+                      angle: radians(_rotate.value),
+                      child: child,
+                    );
+                  },
+                  child: SizedBox.square(
+                    dimension: _size.width * 0.65,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.white,
+                              offset: Offset(-10, -10),
+                              blurRadius: 20,
+                              spreadRadius: 2),
+                          BoxShadow(
+                              color: Color.fromARGB(255, 221, 220, 220),
+                              offset: Offset(20, 20),
+                              blurRadius: 50,
+                              spreadRadius: 2)
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(3),
+                        child: CustomPaint(
+                          foregroundPainter: ClockPainer(),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -74,7 +142,7 @@ class _StopwatchTabState extends State<StopwatchTab> {
                               blurRadius: 20,
                               spreadRadius: 1),
                           BoxShadow(
-                              color: Color.fromARGB(255, 202, 201, 201),
+                              color: Colors.white,
                               offset: Offset(4, 4),
                               blurRadius: 20,
                               spreadRadius: 1)
@@ -114,13 +182,13 @@ class _StopwatchTabState extends State<StopwatchTab> {
                   ),
                 ),
                 Text(
-                  '12.34.56',
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                      fontFamily: GoogleFonts.orbitron().fontFamily,
+                  '${_time.inHours}:${_time.inMinutes}:${_time.inSeconds}',
+                  style: Theme.of(context).textTheme.headline3!.copyWith(
                       letterSpacing: 1.2,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Technology',
                       color: Colors.black),
                 ),
-
                 // for animating balls
                 SizedBox.square(
                   dimension: _size.width * 0.65,
@@ -131,73 +199,49 @@ class _StopwatchTabState extends State<StopwatchTab> {
               ],
             ),
           ),
-          Expanded(
-              child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: GridView.builder(
-                itemCount: 20,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemBuilder: (context, i) {
-                  return SizedBox.shrink(
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            title: Text(
-                              'LAP ${i + 1}',
-                              style: Theme.of(context).textTheme.headline5,
-                            ),
-                            trailing: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.delete)),
-                          ),
-                          ListTile(
-                            title: Text(
-                              '00.11.00',
-                              style: Theme.of(context).textTheme.headline5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-          )),
+          const StopWatchLaps(),
           Padding(
-            padding: const EdgeInsets.only(bottom: 40),
+            padding: const EdgeInsets.only(bottom: 10.0, top: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.black,
-                        fixedSize: const Size(150, 60),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30))),
+                      primary: Colors.black,
+                      elevation: 10,
+                      fixedSize: const Size(150, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
                     onPressed: _onTap,
                     child: Text(
-                      'START',
+                      !_stopWatchContext.isStopWatchRunning ? 'START' : 'LAP',
                       style: Theme.of(context)
                           .textTheme
-                          .headline6!
-                          .copyWith(color: Colors.white),
+                          .bodyMedium!
+                          .copyWith(color: Colors.white, letterSpacing: 1.2),
                     )),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.black,
-                        fixedSize: const Size(150, 60),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30))),
-                    onPressed: null,
-                    child: Text('RESET',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6!
-                            .copyWith(fontWeight: FontWeight.bold))),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.black,
+                    elevation: 10,
+                    fixedSize: const Size(150, 60),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onPressed:
+                      _stopWatchContext.isStopWatchRunning ? _onReset : null,
+                  child: Text(
+                    'RESET',
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: !_stopWatchContext.isStopWatchRunning
+                            ? Colors.black
+                            : Colors.white,
+                        letterSpacing: 1.2),
+                  ),
+                ),
               ],
             ),
           )
@@ -205,25 +249,4 @@ class _StopwatchTabState extends State<StopwatchTab> {
       ),
     );
   }
-}
-
-class ClockPainer extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint _paint = Paint()
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke
-      ..color = Colors.black;
-
-    for (double i = 0; i <= 360; i += 5) {
-      canvas.drawLine(
-          Offset(size.width * .5, size.height * .5),
-          Offset(size.width * .5 * (1 + cos(radians(i))),
-              size.height * .5 * (1 - sin(radians(i)))),
-          _paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
