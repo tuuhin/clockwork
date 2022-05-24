@@ -5,5 +5,6 @@ class Pallet {
   static ThemeData lightTheme = ThemeData(
       primarySwatch: Colors.blue,
       textTheme: GoogleFonts.sourceSansProTextTheme());
-  static ThemeData darkTheme = ThemeData.dark();
+  static ThemeData darkTheme = ThemeData.dark()
+      .copyWith(textTheme: GoogleFonts.sourceSansProTextTheme());
 }

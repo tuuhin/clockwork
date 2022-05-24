@@ -1,2 +1,2 @@
 export 'pallet.dart';
-export 'time_formatter.dart';
+export 'formatter.dart';

@@ -5,11 +5,7 @@ class ThemeContext extends ChangeNotifier {
   bool get currentThemeIsDark => _isCurrentThemeIsDark;
 
   void switchCurrentTheme(bool isLightTheme) {
-    if (isLightTheme) {
-      _isCurrentThemeIsDark = false;
-    } else {
-      _isCurrentThemeIsDark = true;
-    }
+    _isCurrentThemeIsDark = isLightTheme;
     notifyListeners();
   }
 }
