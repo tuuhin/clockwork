@@ -20,7 +20,6 @@ class _StopWatchLapsCardState extends State<StopWatchLapsCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _opacity;
-  late Animation<Offset> _offset;
 
   @override
   void initState() {
@@ -37,11 +36,6 @@ class _StopWatchLapsCardState extends State<StopWatchLapsCard>
         curve: Curves.easeIn,
       ),
     );
-    _offset = Tween<Offset>(
-            begin: Offset(widget.lapNumber + 1 % 2 == 0 ? 1 : -1, 0),
-            end: const Offset(0, 0))
-        .animate(CurvedAnimation(
-            parent: _animationController, curve: Curves.decelerate));
   }
 
   @override
@@ -53,6 +47,7 @@ class _StopWatchLapsCardState extends State<StopWatchLapsCard>
   @override
   void dispose() {
     _animationController.dispose();
+
     super.dispose();
   }
 
@@ -60,50 +55,47 @@ class _StopWatchLapsCardState extends State<StopWatchLapsCard>
   Widget build(BuildContext context) {
     final StopWatchContext _stopWatchContext =
         Provider.of<StopWatchContext>(context);
-    return SlideTransition(
-      position: _offset,
-      child: FadeTransition(
-        opacity: _opacity,
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15), // if you need this
-            side: BorderSide(
-              color: Colors.grey.withOpacity(0.2),
-              width: 0.5,
+    return FadeTransition(
+      opacity: _opacity,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15), // if you need this
+          side: BorderSide(
+            color: Colors.grey.withOpacity(0.2),
+            width: 0.5,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ListTile(
+              dense: true,
+              title: Text('LAP ${widget.lapNumber + 1} ',
+                  style: Theme.of(context).textTheme.headline5!.copyWith(
+                      fontWeight: FontWeight.w700, letterSpacing: 1.2)),
+              trailing: IconButton(
+                  onPressed: () async {
+                    _animationController.reverse();
+                    await Future.delayed(
+                        _animationController.duration ?? const Duration());
+                    _stopWatchContext.removeLap(widget.lapNumber);
+                  },
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.black,
+                  )),
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ListTile(
-                dense: true,
-                title: Text('LAP ${widget.lapNumber + 1} ',
-                    style: Theme.of(context).textTheme.headline5!.copyWith(
-                        fontWeight: FontWeight.w700, letterSpacing: 1.2)),
-                trailing: IconButton(
-                    onPressed: () async {
-                      _animationController.reverse();
-                      await Future.delayed(
-                          _animationController.duration ?? const Duration());
-                      _stopWatchContext.removeLap(widget.lapNumber);
-                    },
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.black,
-                    )),
-              ),
-              ListTile(
-                title: Text(clockFormat(widget.time),
-                    style: const TextStyle(
-                        fontSize: 25,
-                        letterSpacing: 1.2,
-                        fontWeight: FontWeight.w800,
-                        fontFamily: 'Technology',
-                        color: Colors.black)),
-              ),
-            ],
-          ),
+            ListTile(
+              title: Text(clockFormat(widget.time),
+                  style: const TextStyle(
+                      fontSize: 25,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.w800,
+                      fontFamily: 'Technology',
+                      color: Colors.black)),
+            ),
+          ],
         ),
       ),
     );

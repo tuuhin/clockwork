@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/app/widgets/stopwatch/lap_cards.dart';
 import 'package:stopwatch/context/context.dart';
+import 'package:stopwatch/utils/utils.dart' show clockFormat;
 import 'package:vector_math/vector_math.dart' show radians;
 
 class StopwatchTab extends StatefulWidget {
@@ -23,32 +23,41 @@ class _StopwatchTabState extends State<StopwatchTab>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _stopWatchContext = Provider.of<StopWatchContext>(context);
+    if (_stopWatchContext.isStopWatchRunning) {
+      _animationController.repeat();
+    }
   }
 
   @override
   void initState() {
     super.initState();
 
-    _animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 20));
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    );
     _rotate = Tween<double>(
       begin: 0.0,
       end: 360,
     ).animate(_animationController);
-
-    _animationController.addListener(() {
-      if (_animationController.isCompleted) {
-        _animationController.repeat();
-      }
-    });
   }
 
-  void _onTap() {
-    _stopWatchContext.startTheWatch();
+  void _onStartTap() {
+    if (!_stopWatchContext.isStopWatchRunning) {
+      _animationController.repeat();
+      _stopWatchContext.startTheWatch();
+    }
+
+    _stopWatchContext.toggleTheWatch();
+    // _animationController.stop();
   }
 
   void _onReset() {
-    _stopWatchContext.stopTheWatch();
+    if (!_stopWatchContext.isWatchTicking) {
+      _animationController.stop();
+      return _stopWatchContext.stopTheWatch();
+    }
+    _stopWatchContext.createALap();
   }
 
   @override
@@ -61,6 +70,7 @@ class _StopwatchTabState extends State<StopwatchTab>
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
     final StopWatchTime _time = Provider.of<StopWatchTime>(context);
+
     return Scaffold(
       body: Column(
         children: [
@@ -75,18 +85,21 @@ class _StopwatchTabState extends State<StopwatchTab>
                   dimension: _size.width * .67,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.white,
-                              offset: Offset(-10, -10),
+                              color: Theme.of(context).cardColor,
+                              offset: const Offset(-20, -20),
                               blurRadius: 20,
                               spreadRadius: 2),
                           BoxShadow(
-                              color: Color.fromARGB(255, 205, 205, 205),
-                              offset: Offset(20, 20),
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Color.fromARGB(255, 205, 205, 205)
+                                  : Colors.grey,
+                              offset: const Offset(20, 20),
                               blurRadius: 50,
                               spreadRadius: 2)
                         ]),
@@ -104,17 +117,20 @@ class _StopwatchTabState extends State<StopwatchTab>
                     dimension: _size.width * 0.65,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.white,
-                              offset: Offset(-10, -10),
+                              color: Theme.of(context).cardColor,
+                              offset: const Offset(-10, -10),
                               blurRadius: 20,
                               spreadRadius: 2),
                           BoxShadow(
-                              color: Color.fromARGB(255, 221, 220, 220),
-                              offset: Offset(20, 20),
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? const Color.fromARGB(255, 221, 220, 220)
+                                  : Theme.of(context).scaffoldBackgroundColor,
+                              offset: const Offset(20, 20),
                               blurRadius: 50,
                               spreadRadius: 2)
                         ],
@@ -122,7 +138,12 @@ class _StopwatchTabState extends State<StopwatchTab>
                       child: Padding(
                         padding: const EdgeInsets.all(3),
                         child: CustomPaint(
-                          foregroundPainter: ClockPainer(),
+                          foregroundPainter: ClockPainer(
+                            dialColor:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.black87
+                                    : Colors.white70,
+                          ),
                         ),
                       ),
                     ),
@@ -132,18 +153,18 @@ class _StopwatchTabState extends State<StopwatchTab>
                   dimension: _size.width * .6,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.white,
-                              offset: Offset(-4, -4),
+                              color: Theme.of(context).cardColor,
+                              offset: const Offset(-4, -4),
                               blurRadius: 20,
                               spreadRadius: 1),
                           BoxShadow(
-                              color: Colors.white,
-                              offset: Offset(4, 4),
+                              color: Theme.of(context).cardColor,
+                              offset: const Offset(4, 4),
                               blurRadius: 20,
                               spreadRadius: 1)
                         ]),
@@ -153,10 +174,10 @@ class _StopwatchTabState extends State<StopwatchTab>
                   dimension: _size.width * .48,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white,
-                        boxShadow: [
+                        color: Theme.of(context).cardColor,
+                        boxShadow: const [
                           BoxShadow(
                               color: Color.fromARGB(255, 226, 225, 225),
                               offset: Offset(-1, -1),
@@ -169,12 +190,15 @@ class _StopwatchTabState extends State<StopwatchTab>
                   dimension: _size.width * .35,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         boxShadow: [
                           BoxShadow(
-                              color: Color.fromARGB(255, 234, 232, 232),
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Color.fromARGB(255, 234, 232, 232)
+                                  : Colors.grey,
                               offset: Offset(0, 0),
                               blurRadius: 20,
                               spreadRadius: 1),
@@ -182,7 +206,7 @@ class _StopwatchTabState extends State<StopwatchTab>
                   ),
                 ),
                 Text(
-                  '${_time.inHours}:${_time.inMinutes}:${_time.inSeconds}',
+                  clockFormat(_time),
                   style: Theme.of(context).textTheme.headline3!.copyWith(
                       letterSpacing: 1.2,
                       fontWeight: FontWeight.bold,
@@ -214,12 +238,12 @@ class _StopwatchTabState extends State<StopwatchTab>
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    onPressed: _onTap,
+                    onPressed: _onStartTap,
                     child: Text(
-                      !_stopWatchContext.isStopWatchRunning ? 'START' : 'LAP',
+                      !_stopWatchContext.isWatchTicking ? 'START' : 'PAUSE',
                       style: Theme.of(context)
                           .textTheme
-                          .bodyMedium!
+                          .subtitle1!
                           .copyWith(color: Colors.white, letterSpacing: 1.2),
                     )),
                 ElevatedButton(
@@ -234,8 +258,8 @@ class _StopwatchTabState extends State<StopwatchTab>
                   onPressed:
                       _stopWatchContext.isStopWatchRunning ? _onReset : null,
                   child: Text(
-                    'RESET',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    !_stopWatchContext.isWatchTicking ? 'RESET' : 'LAP',
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
                         color: !_stopWatchContext.isStopWatchRunning
                             ? Colors.black
                             : Colors.white,

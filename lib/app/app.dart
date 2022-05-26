@@ -9,8 +9,10 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App> with SingleTickerProviderStateMixin {
+class _AppState extends State<App> with TickerProviderStateMixin {
   late TabController _tabController;
+  late AnimationController _animationController;
+
   final List<Widget> _tabs = const [
     AlarmTab(),
     StopwatchTab(),
@@ -34,7 +36,10 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
       length: 4,
       vsync: this,
     );
-    print(_tabController.indexIsChanging);
+
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
+
     _tabController.addListener(() {
       if (_tabController.index != _currentIndex &&
           !_tabController.indexIsChanging) {
@@ -45,39 +50,48 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
     });
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
   void _onTap(int index) {
     if (_currentIndex != index) {
       setState(() => _currentIndex = index);
-      _tabController.animateTo(index, curve: Curves.easeInOut);
+      _tabController.animateTo(
+        index,
+        curve: Curves.decelerate,
+        duration: const Duration(milliseconds: 200),
+      );
     }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // extendBodyBehindAppBar: true,
         drawer: const AppDrawer(),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: Builder(builder: (context) {
-                return IconButton(
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                  icon:
-                      const Icon(Icons.settings, size: 30, color: Colors.black),
-                );
-              }),
-            )
+            AnimatedBuilder(
+                animation: _animationController,
+                builder: (context, animation) {
+                  return IconButton(
+                    onPressed: () {
+                      _animationController.forward();
+                      Scaffold.of(context).openDrawer();
+                    },
+                    icon: AnimatedIcon(
+                        color: Colors.black,
+                        icon: AnimatedIcons.arrow_menu,
+                        progress: _animationController),
+                  );
+                })
           ],
           bottom: TabBar(
               splashFactory: NoSplash.splashFactory,
@@ -88,34 +102,33 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
                           : Colors.transparent),
               indicator: const BoxDecoration(),
               labelPadding: EdgeInsets.zero,
-              padding: const EdgeInsets.symmetric(horizontal: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 1),
               controller: _tabController,
               onTap: _onTap,
               tabs: _tabsName
                   .asMap()
-                  .map<int, Tab>((index, value) => MapEntry(
+                  .map<int, Tab>((index, tabName) => MapEntry(
                         index,
                         Tab(
                           child: AnimatedContainer(
-                            curve: Curves.easeInOutCubic,
-                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                            duration: const Duration(milliseconds: 400),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(15),
                               color: _currentIndex == index
-                                  ? const Color.fromARGB(255, 220, 220, 220)
+                                  ? const Color.fromARGB(220, 220, 220, 220)
                                   : null,
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 10),
+                              padding: const EdgeInsets.all(10),
                               child: Text(
-                                value,
+                                tabName,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1!
+                                    .subtitle2!
                                     .copyWith(
                                         fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.5,
+                                        letterSpacing: 1,
                                         color: _currentIndex == index
                                             ? const Color.fromARGB(
                                                 255, 43, 43, 43)
