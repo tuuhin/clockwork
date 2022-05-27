@@ -12,6 +12,9 @@ void main() async {
 
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  // SystemChrome.setSystemUIOverlayStyle(
+  //     const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   runApp(const ProviderWrappers());
@@ -23,6 +26,7 @@ class ProviderWrappers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final StopWatchContext _stopWatchContext = StopWatchContext();
+    final ClocksContext _clockContext = ClocksContext();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ThemeContext>(
@@ -32,7 +36,10 @@ class ProviderWrappers extends StatelessWidget {
             create: (context) => _stopWatchContext),
         StreamProvider<StopWatchTime>(
             create: (context) => _stopWatchContext.getStopWatch(),
-            initialData: const Duration())
+            initialData: const Duration()),
+        StreamProvider<ClockTime>(
+            create: (context) => _clockContext.getWatch(),
+            initialData: ClockTime.now()),
       ],
       child: const MyApp(),
     );

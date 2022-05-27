@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math.dart' show radians;
 
-class ClockPainer extends CustomPainter {
+class StopWatchPainter extends CustomPainter {
   final Color dialColor;
 
-  ClockPainer({required this.dialColor});
+  StopWatchPainter({required this.dialColor});
 
   @override
   void paint(Canvas canvas, Size size) {
