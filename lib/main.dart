@@ -29,9 +29,6 @@ class ProviderWrappers extends StatelessWidget {
     final ClocksContext _clockContext = ClocksContext();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThemeContext>(
-          create: (context) => ThemeContext(),
-        ),
         ChangeNotifierProvider<StopWatchContext>(
             create: (context) => _stopWatchContext),
         StreamProvider<StopWatchTime>(
@@ -50,14 +47,10 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final ThemeContext _themeData = Provider.of<ThemeContext>(context);
-
     return MaterialApp(
         title: 'ClockWork',
         debugShowCheckedModeBanner: false,
-        theme: _themeData.currentThemeIsDark
-            ? Pallet.darkTheme
-            : Pallet.lightTheme,
+        theme: Pallet.lightTheme,
         home: const App());
   }
 }

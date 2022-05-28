@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:stopwatch/app/tabs/tabs.dart';
-import 'package:stopwatch/app/widgets/app_drawer.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -9,9 +8,8 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App> with TickerProviderStateMixin {
+class _AppState extends State<App> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late AnimationController _animationController;
 
   final List<Widget> _tabs = const [
     AlarmTab(),
@@ -37,9 +35,6 @@ class _AppState extends State<App> with TickerProviderStateMixin {
       vsync: this,
     );
 
-    _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 200));
-
     _tabController.addListener(() {
       if (_tabController.index != _currentIndex &&
           !_tabController.indexIsChanging) {
@@ -64,7 +59,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
-    _animationController.dispose();
+
     super.dispose();
   }
 
@@ -72,36 +67,13 @@ class _AppState extends State<App> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
         // extendBodyBehindAppBar: true,
-        drawer: const AppDrawer(),
+
         appBar: AppBar(
+          toolbarHeight: 10.0,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          actions: [
-            AnimatedBuilder(
-                animation: _animationController,
-                builder: (context, animation) {
-                  return IconButton(
-                    onPressed: () {
-                      _animationController.forward();
-                      Scaffold.of(context).openDrawer();
-                    },
-                    icon: AnimatedIcon(
-                        color: Colors.black,
-                        icon: AnimatedIcons.arrow_menu,
-                        progress: _animationController),
-                  );
-                })
-          ],
           bottom: TabBar(
-              splashFactory: NoSplash.splashFactory,
-              overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                  (Set<MaterialState> states) =>
-                      states.contains(MaterialState.focused)
-                          ? null
-                          : Colors.transparent),
-              indicator: const BoxDecoration(),
-              labelPadding: EdgeInsets.zero,
               padding: const EdgeInsets.symmetric(horizontal: 1),
               controller: _tabController,
               onTap: _onTap,
