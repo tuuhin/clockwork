@@ -1,14 +1,15 @@
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:stopwatch/app/app.dart';
 import 'package:stopwatch/context/context.dart';
+import 'package:stopwatch/service/services.dart';
 import 'package:stopwatch/utils/pallet.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AndroidAlarmManager.initialize();
+  await AlarmService.init();
+  await NotificationService.init();
 
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -32,10 +33,10 @@ class ProviderWrappers extends StatelessWidget {
         ChangeNotifierProvider<StopWatchContext>(
             create: (context) => _stopWatchContext),
         StreamProvider<StopWatchTime>(
-            create: (context) => _stopWatchContext.getStopWatch(),
+            create: (context) => _stopWatchContext.getStopWatch,
             initialData: const Duration()),
         StreamProvider<ClockTime>(
-            create: (context) => _clockContext.getWatch(),
+            create: (context) => _clockContext.getWatch,
             initialData: ClockTime.now()),
       ],
       child: const MyApp(),
