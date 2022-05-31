@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:stopwatch/app/app.dart';
 import 'package:stopwatch/context/context.dart';
+import 'package:stopwatch/data/api/worldtimeapi_client.dart';
+import 'package:stopwatch/models/timezone_model.dart';
 import 'package:stopwatch/service/services.dart';
 import 'package:stopwatch/utils/pallet.dart';
 
@@ -28,6 +30,7 @@ class ProviderWrappers extends StatelessWidget {
   Widget build(BuildContext context) {
     final StopWatchContext _stopWatchContext = StopWatchContext();
     final ClocksContext _clockContext = ClocksContext();
+    final TimeZoneContext _timezoneContext = TimeZoneContext();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<StopWatchContext>(
@@ -38,6 +41,8 @@ class ProviderWrappers extends StatelessWidget {
         StreamProvider<ClockTime>(
             create: (context) => _clockContext.getWatch,
             initialData: ClockTime.now()),
+        FutureProvider<List<TimeZoneModel?>?>(
+            create: (context) => _timezoneContext.zones, initialData: const [])
       ],
       child: const MyApp(),
     );
