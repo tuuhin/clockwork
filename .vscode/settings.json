@@ -1,5 +1,7 @@
 {
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "Dart-Code.dart-code"
+  "editor.defaultFormatter": "Dart-Code.dart-code",
+  "dart.previewFlutterUiGuides": true,
+ 
 }
