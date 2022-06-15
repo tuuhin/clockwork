@@ -13,6 +13,7 @@ class StopWatchPainter extends CustomPainter {
     Paint _paint = Paint()
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
       ..color = dialColor;
 
     for (double i = 0; i <= 360; i += 5) {

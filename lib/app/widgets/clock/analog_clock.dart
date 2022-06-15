@@ -21,11 +21,19 @@ class _AnalogClockState extends State<AnalogClock>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 30),
+      duration: const Duration(seconds: 60),
     );
     _rotation =
         Tween<double>(begin: 0.0, end: 360).animate(_animationController);
-    _animationController.repeat();
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _animationController.repeat();
+      } else if (status == AnimationStatus.dismissed) {
+        _animationController.forward();
+      }
+    });
+    _animationController.forward();
   }
 
   @override

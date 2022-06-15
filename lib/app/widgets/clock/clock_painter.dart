@@ -13,7 +13,7 @@ class ClockMainPainter extends CustomPainter {
 
   ClockMainPainter({
     required this.current,
-    this.isSeconds,
+    this.isSeconds = true,
     this.hourDialColor,
     this.minuteDialColor,
     this.secondsDialColor,
@@ -21,8 +21,8 @@ class ClockMainPainter extends CustomPainter {
   });
   @override
   void paint(Canvas canvas, Size size) {
-    // The dial
     if (isSeconds == true) {
+      /// [SECONDS]
       canvas.drawLine(
           Offset(
               size.width * .5 -
@@ -42,6 +42,8 @@ class ClockMainPainter extends CustomPainter {
             ..isAntiAlias = true
             ..color = secondsDialColor ?? Colors.black);
     }
+
+    /// [MINUTES]
     canvas.drawLine(
         Offset(
             size.width * .5 -
@@ -62,14 +64,18 @@ class ClockMainPainter extends CustomPainter {
           ..style = PaintingStyle.stroke
           ..color = minuteDialColor ?? Colors.black);
 
+    /// [HOUR]
+
     canvas.drawLine(
         Offset(
-            size.width * .5 - size.width * .25 * sin(radians(current.hour * 6)),
-            size.height * .5 +
-                size.height * .25 * cos(radians(current.hour * 6))),
+            size.width * .5 +
+                size.width * .25 * sin(radians(current.hour * 15)),
+            size.height * .5 -
+                size.height * .25 * cos(radians(current.hour * 15))),
         Offset(
-            size.width * .5 + size.width * .1 * sin(radians(current.hour * 6)),
-            size.width * .5 - size.width * .1 * cos(radians(current.hour * 6))),
+            size.width * .5 - size.width * .1 * sin(radians(current.hour * 15)),
+            size.width * .5 +
+                size.width * .1 * cos(radians(current.hour * 15))),
         Paint()
           ..strokeWidth = 7
           ..isAntiAlias = true

@@ -16,12 +16,27 @@ class TimeZoneModel {
   @HiveField(3)
   String endpoint;
 
-  TimeZoneModel({
-    this.region,
-    required this.area,
-    required this.location,
-    required this.endpoint,
-  });
+  @HiveField(4)
+  bool isSelected;
+
+  @HiveField(5)
+  int offset;
+
+  TimeZoneModel(
+      {this.region,
+      required this.area,
+      required this.location,
+      required this.endpoint,
+      this.offset = 0,
+      this.isSelected = false});
+
+  set changeSelectMode(bool isSelected) {
+    isSelected = isSelected;
+  }
+
+  set newOffset(int offset) {
+    offset = offset;
+  }
 
   @override
   String toString() => '$area:$location';
