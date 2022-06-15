@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
 String stopWatchFormat(Duration time) {
@@ -13,3 +15,14 @@ String clockFormat(DateTime dateTime) {
   String _timeSeconds = _twoDigits(dateTime.second);
   return '$_timeHour:$_timeMinutes:$_timeSeconds';
 }
+
+String getTimeFromOffset(int offset) {
+  DateTime time = DateTime.now()
+      .subtract(const Duration(seconds: 19800))
+      .add(Duration(seconds: offset));
+  return '${_twoDigits(time.hour)}:${_twoDigits(time.minute)}';
+}
+
+DateTime getime(offset) => DateTime.now()
+    .subtract(const Duration(seconds: 19800))
+    .add(Duration(seconds: offset));
