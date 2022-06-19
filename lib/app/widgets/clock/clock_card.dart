@@ -10,26 +10,39 @@ class ClockCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime _current = getime(zone.offset);
+    bool _isDay = _current.hour > 6 && _current.hour < 16;
     return Card(
       child: ListTile(
         minVerticalPadding: 4,
         leading: Container(
-          height: 50,
-          width: 50,
-          decoration: const BoxDecoration(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [Colors.white, Colors.grey],
+                colors: _isDay
+                    ? [Colors.grey, Colors.white54]
+                    : [Colors.black, Colors.black54],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
             shape: BoxShape.circle,
           ),
           child: CustomPaint(
-            painter: SmallClockPainter(current: getime(zone.offset)),
+            painter: SmallClockPainter(
+              current: _current,
+              dialColor: _isDay ? Colors.black : Colors.white,
+            ),
           ),
         ),
         title: Text(zone.location),
-        subtitle: Text(zone.area),
-        trailing: Text(getTimeFromOffset(zone.offset)),
+        subtitle: zone.area != 'Etc' ? Text(zone.area) : null,
+        trailing: Text(
+          getTimeFromOffset(zone.offset),
+          style: Theme.of(context)
+              .textTheme
+              .headline6!
+              .copyWith(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+        ),
       ),
     );
   }

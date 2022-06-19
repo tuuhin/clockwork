@@ -53,20 +53,18 @@ class _AnalogClockState extends State<AnalogClock>
         alignment: Alignment.center,
         children: [
           SizedBox.square(
-            dimension: _size.width * .62,
+            dimension: _size.width * .6,
             child: Container(
-              decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                BoxShadow(
-                    color: Theme.of(context).cardColor,
-                    offset: const Offset(-20, -20),
-                    blurRadius: 40,
-                    spreadRadius: 2),
-                const BoxShadow(
-                    color: Color.fromARGB(255, 205, 205, 205),
-                    offset: Offset(20, 20),
-                    blurRadius: 40,
-                    spreadRadius: 2)
-              ]),
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(2, 2),
+                        blurRadius: 2,
+                        spreadRadius: .1)
+                  ]),
             ),
           ),
           AnimatedBuilder(
@@ -75,7 +73,7 @@ class _AnalogClockState extends State<AnalogClock>
                 return Transform.rotate(
                   angle: radians(_rotation.value),
                   child: SizedBox.square(
-                    dimension: _size.width * 0.55,
+                    dimension: _size.width * 0.56,
                     child: CustomPaint(
                       painter: ClockPainterDial(color: Colors.grey),
                     ),
@@ -83,26 +81,31 @@ class _AnalogClockState extends State<AnalogClock>
                 );
               }),
           SizedBox.square(
-              dimension: _size.width * 0.5,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+              dimension: _size.width * 0.45,
+              child: Container(
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [Colors.white, Colors.grey],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0, 0),
+                        blurRadius: 1,
+                        spreadRadius: .1),
+                    BoxShadow(
+                        color: Colors.white,
+                        offset: Offset(1, 1),
+                        blurRadius: 1,
+                        spreadRadius: .1)
+                  ],
+                  color: Colors.white,
                   shape: BoxShape.circle,
                 ),
               )),
           SizedBox.square(
-            dimension: _size.width * 0.43,
+            dimension: _size.width * 0.4,
             child: CustomPaint(
               painter: ClockMainPainter(
-                  current: _clck,
-                  isSeconds: true,
-                  hourDialColor: Colors.black,
-                  secondsDialColor: Colors.grey,
-                  minuteDialColor: Colors.black87),
+                current: _clck,
+              ),
             ),
           ),
         ],
