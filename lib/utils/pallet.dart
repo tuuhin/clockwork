@@ -71,6 +71,15 @@ class Pallet {
     ),
     progressIndicatorTheme:
         const ProgressIndicatorThemeData(color: Colors.black),
+    cardTheme: CardTheme(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+        side: BorderSide(
+          color: Colors.grey.withOpacity(0.2),
+          width: 0.5,
+        ),
+      ),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -96,7 +105,7 @@ class Pallet {
       primary: Colors.white,
       elevation: 10,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(15),
       ),
     )),
   );
