@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:stopwatch/app/routes/clock_locations.dart';
 import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/app/widgets/clock/analog_clock.dart';
 import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/domain/models/detailed_timezone_model.dart';
 import 'package:stopwatch/utils/time_formatter.dart' show clockFormat;
 
 class ClocksTab extends StatefulWidget {
@@ -17,19 +14,13 @@ class ClocksTab extends StatefulWidget {
 
 class _ClocksTabState extends State<ClocksTab> {
   late ClockTime _clck;
-  late TimeZoneContext _timeZoneContext;
-  final GlobalKey<AnimatedListState> _key = GlobalKey<AnimatedListState>();
 
   @override
   void didChangeDependencies() {
     _clck = Provider.of<ClockTime>(context);
-    _timeZoneContext = Provider.of<TimeZoneContext>(context);
 
     super.didChangeDependencies();
   }
-
-  final Tween<Offset> _offset =
-      Tween<Offset>(begin: const Offset(-1, 0), end: const Offset(0, 0));
 
   @override
   Widget build(BuildContext context) {
@@ -38,28 +29,16 @@ class _ClocksTabState extends State<ClocksTab> {
         padding: const EdgeInsets.all(8.0),
         child: Column(children: [
           const AnalogClock(),
+          Text('Current:  ${_clck.day}/${_clck.month}/${_clck.year} '),
           Text(
             clockFormat(_clck),
             style: Theme.of(context).textTheme.headline4!.copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
-                fontFamily: GoogleFonts.openSans().fontFamily),
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.2,
+                ),
           ),
-          Text('Current:  ${_clck.day}/${_clck.month}/${_clck.year} '),
-          Expanded(
-            child: ListView.builder(
-                itemCount: _timeZoneContext.getAllDetailedModels().length,
-                itemBuilder: ((context, index) => ClockCard(
-                    zone: _timeZoneContext.getAllDetailedModels()[index]))),
-            // child: AnimatedList(
-            //     key: _key,
-            //     itemBuilder: (context, index, animation) {
-            //       return SlideTransition(
-            //         position: animation.drive(_offset),
-            //       );
-            //     }),
-          )
+          const Expanded(child: TimeZonesClock())
         ]),
       ),
       bottomNavigationBar: BottomAppBar(

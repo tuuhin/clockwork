@@ -18,11 +18,13 @@ class TimeZoneData {
   List<TimeZoneModel> getAllZones() => _box!.values.toList();
 
   List<DetailedTimeZoneModel> getAllDetailedZones() =>
-      _details!.values.toList();
+      _details!.values.toList().reversed.toList();
 
   bool checkIfDetailedModelExists(TimeZoneModel zone) => _details!.values
       .where((DetailedTimeZoneModel element) =>
           element.location == zone.location ||
           element.location == zone.region && element.area == element.area)
       .isNotEmpty;
+
+  void clearDetailedModels() async => await _details!.clear();
 }

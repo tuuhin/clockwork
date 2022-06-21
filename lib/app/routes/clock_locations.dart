@@ -16,12 +16,20 @@ class _ClockLocationsState extends State<ClockLocations> {
   late TimeZoneContext _timeZoneContext;
 
   String filter = '';
+  bool _showActionButton = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _scrollController.addListener(() {});
+    _scrollController.addListener(() {
+      if (_scrollController.offset >
+          _scrollController.position.minScrollExtent) {
+        setState(() {
+          _showActionButton = true;
+        });
+      }
+    });
   }
 
   @override
@@ -55,7 +63,10 @@ class _ClockLocationsState extends State<ClockLocations> {
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('CANCEL')),
             ElevatedButton(
-                onPressed: () => selectCity(zoneModel),
+                onPressed:
+                    !_timeZoneContext.checkIfDetailModelSelected(zoneModel)
+                        ? () => selectCity(zoneModel)
+                        : null,
                 child: Text(
                   'SELECT THIS CITY',
                   style: Theme.of(context).textTheme.subtitle2!.copyWith(
@@ -64,6 +75,37 @@ class _ClockLocationsState extends State<ClockLocations> {
           ],
         );
       });
+
+  void removeAll() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Clear all the selected cities'),
+            content: Text(
+              'Remove all the selected cities ,the old selected cities are need to be selected again to view',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('CANCEL')),
+              ElevatedButton(
+                  onPressed: _timeZoneContext.getAllDetailedModels().isNotEmpty
+                      ? () {
+                          _timeZoneContext.removeDetailedModels();
+                          Navigator.of(context)
+                            ..pop()
+                            ..pop();
+                        }
+                      : null,
+                  child: Text('Remove',
+                      style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                          fontWeight: FontWeight.w600, color: Colors.white)))
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +129,10 @@ class _ClockLocationsState extends State<ClockLocations> {
                       ))
             ],
           ),
+          actions: [
+            IconButton(
+                onPressed: removeAll, icon: const Icon(Icons.delete_outlined))
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(40),
             child: Padding(
@@ -127,10 +173,17 @@ class _ClockLocationsState extends State<ClockLocations> {
                 ),
         ),
         floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(Icons.keyboard_arrow_down),
-        ),
+        floatingActionButton: _showActionButton
+            ? FloatingActionButton(
+                onPressed: () {
+                  _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.decelerate);
+                },
+                child: const Icon(Icons.keyboard_arrow_down),
+              )
+            : null,
       ),
     );
   }
