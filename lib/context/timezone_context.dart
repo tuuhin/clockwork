@@ -7,6 +7,10 @@ import 'package:stopwatch/domain/models/models.dart';
 class TimeZoneContext extends ChangeNotifier {
   static final WorldTimeApiClient _clt = WorldTimeApiClient();
   static final TimeZoneData _data = TimeZoneData();
+  final Tween<Offset> _offset = Tween<Offset>(
+    begin: const Offset(-1, 0),
+    end: const Offset(0, 0),
+  );
   final GlobalKey<AnimatedListState> _globalKey =
       GlobalKey<AnimatedListState>();
 
@@ -38,7 +42,7 @@ class TimeZoneContext extends ChangeNotifier {
       Map? _details = await _clt.getTimeZoneInfo(zone);
       if (_details != null) {
         int rawOffset = _details['raw_offset'];
-        print('added');
+
         _data.addDetailedZone(DetailedTimeZoneModel(
             location:
                 zone.region != null ? zone.region.toString() : zone.location,
@@ -47,15 +51,22 @@ class TimeZoneContext extends ChangeNotifier {
       }
       // Adding new member to the animated list
 
-      print('added');
       notifyListeners();
 
       _globalKey.currentState!.insertItem(0);
     }
   }
 
+  void removeIndividualModel(DetailedTimeZoneModel zone) {
+    int index = _data.getIndex(zone);
+    _globalKey.currentState!
+        .removeItem(index, (context, animation) => const SizedBox());
+    _data.removeIndividualModel(zone);
+    notifyListeners();
+  }
+
   void removeDetailedModels() {
-    var _allDetailModels = getAllDetailedModels();
+    List<DetailedTimeZoneModel> _allDetailModels = getAllDetailedModels();
 
     Future future = Future(() {});
     for (var entry in _allDetailModels) {
@@ -64,10 +75,6 @@ class TimeZoneContext extends ChangeNotifier {
                 _globalKey.currentState!.removeItem(
                   0,
                   (context, animation) {
-                    final Tween<Offset> _offset = Tween<Offset>(
-                      begin: const Offset(-1, 0),
-                      end: const Offset(0, 0),
-                    );
                     return SlideTransition(
                       position: animation.drive(_offset),
                       child: ClockCard(zone: entry),

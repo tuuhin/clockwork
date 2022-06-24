@@ -16,37 +16,49 @@ class _ClockLocationsState extends State<ClockLocations> {
   late TimeZoneContext _timeZoneContext;
 
   String filter = '';
-  bool _showActionButton = false;
+  bool _atBottom = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (_scrollController.offset >
-          _scrollController.position.minScrollExtent) {
-        setState(() {
-          _showActionButton = true;
-        });
-      }
-    });
   }
 
   @override
   void didChangeDependencies() {
     _timeZoneContext = Provider.of<TimeZoneContext>(context);
 
+    _scrollController.addListener(() {
+      if (_scrollController.offset >=
+          _scrollController.position.maxScrollExtent) {
+        setState(() => _atBottom = true);
+      }
+      if (_scrollController.offset <=
+          _scrollController.position.minScrollExtent) {
+        setState(() => _atBottom = false);
+      }
+    });
+
     super.didChangeDependencies();
   }
 
   void selectCity(TimeZoneModel zone) async {
-    await _timeZoneContext.getZoneDetails(zone);
+    FocusScope.of(context).requestFocus(FocusNode());
     Navigator.of(context)
       ..pop()
       ..pop();
+    await _timeZoneContext.getZoneDetails(zone);
   }
 
-  void loadInfo(TimeZoneModel? zoneModel) => showDialog(
+  void removeModels() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    Navigator.of(context)
+      ..pop()
+      ..pop();
+    _timeZoneContext.removeDetailedModels();
+  }
+
+  void loadInfoDialog(TimeZoneModel? zoneModel) => showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -76,7 +88,7 @@ class _ClockLocationsState extends State<ClockLocations> {
         );
       });
 
-  void removeAll() {
+  void removeAllDialog() {
     showDialog(
         context: context,
         builder: (context) {
@@ -92,12 +104,7 @@ class _ClockLocationsState extends State<ClockLocations> {
                   child: const Text('CANCEL')),
               ElevatedButton(
                   onPressed: _timeZoneContext.getAllDetailedModels().isNotEmpty
-                      ? () {
-                          _timeZoneContext.removeDetailedModels();
-                          Navigator.of(context)
-                            ..pop()
-                            ..pop();
-                        }
+                      ? removeModels
                       : null,
                   child: Text('Remove',
                       style: Theme.of(context).textTheme.subtitle2!.copyWith(
@@ -131,7 +138,8 @@ class _ClockLocationsState extends State<ClockLocations> {
           ),
           actions: [
             IconButton(
-                onPressed: removeAll, icon: const Icon(Icons.delete_outlined))
+                onPressed: removeAllDialog,
+                icon: const Icon(Icons.delete_outlined))
           ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(40),
@@ -160,7 +168,7 @@ class _ClockLocationsState extends State<ClockLocations> {
                             ? element.location.toLowerCase().contains(filter)
                             : element.region!.contains(filter))
                         .map((TimeZoneModel? zone) => ListTile(
-                              onTap: () => loadInfo(zone),
+                              onTap: () => loadInfoDialog(zone),
                               subtitle: Text(zone!.area),
                               title: zone.region == null
                                   ? Text(zone.location)
@@ -173,17 +181,18 @@ class _ClockLocationsState extends State<ClockLocations> {
                 ),
         ),
         floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-        floatingActionButton: _showActionButton
-            ? FloatingActionButton(
-                onPressed: () {
-                  _scrollController.animateTo(
-                      _scrollController.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 800),
-                      curve: Curves.decelerate);
-                },
-                child: const Icon(Icons.keyboard_arrow_down),
-              )
-            : null,
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _scrollController.animateTo(
+                  !_atBottom
+                      ? _scrollController.position.maxScrollExtent
+                      : _scrollController.position.minScrollExtent,
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.decelerate);
+            },
+            child: Icon(!_atBottom
+                ? Icons.keyboard_arrow_down
+                : Icons.keyboard_arrow_up)),
       ),
     );
   }

@@ -14,6 +14,7 @@ class TimeZonesClock extends StatefulWidget {
 class _TimeZonesClockState extends State<TimeZonesClock> {
   late TimeZoneContext _timeZoneContext;
   late List<DetailedTimeZoneModel> _zones;
+
   // final List<DetailedTimeZoneModel> _zones = [];
 
   @override
@@ -36,10 +37,19 @@ class _TimeZonesClockState extends State<TimeZonesClock> {
   void didChangeDependencies() {
     _timeZoneContext = Provider.of<TimeZoneContext>(context);
     _zones = _timeZoneContext.getAllDetailedModels();
-    print('called');
 
     super.didChangeDependencies();
   }
+
+  final Tween<Offset> _offset = Tween<Offset>(
+    begin: const Offset(-1, 0),
+    end: const Offset(0, 0),
+  );
+
+  final Tween<double> _opacity = Tween<double>(
+    begin: 0.0,
+    end: 1.0,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -47,17 +57,6 @@ class _TimeZonesClockState extends State<TimeZonesClock> {
         physics: const BouncingScrollPhysics(),
         key: _timeZoneContext.zonesListKey,
         itemBuilder: (context, index, animation) {
-          final Tween<Offset> _offset = Tween<Offset>(
-            begin: const Offset(-1, 0),
-            end: const Offset(0, 0),
-          );
-
-          final Tween<double> _opacity = Tween<double>(
-            begin: 0.0,
-            end: 1.0,
-          );
-
-          print(index);
           return FadeTransition(
             opacity: animation.drive(_opacity),
             child: SlideTransition(

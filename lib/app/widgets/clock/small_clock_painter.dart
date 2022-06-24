@@ -29,19 +29,23 @@ class SmallClockPainter extends CustomPainter {
     );
 
     /// [HOUR]
-    int hour = current.hour >= 12 ? current.hour - 11 : current.hour;
     canvas.drawLine(
-        Offset(size.width * .5 + size.width * .25 * sin(radians(hour * 30)),
-            size.height * .5 - size.height * .25 * cos(radians(hour * 30))),
-        Offset(size.width * .5 - size.width * .1 * sin(radians(hour * 30)),
-            size.width * .5 + size.width * .1 * cos(radians(hour * 30))),
+        Offset(
+            size.width * .5 +
+                size.width * .25 * sin(radians(current.hour * 30)),
+            size.height * .5 -
+                size.height * .25 * cos(radians(current.hour * 30))),
+        Offset(
+            size.width * .5 - size.width * .1 * sin(radians(current.hour * 30)),
+            size.width * .5 +
+                size.width * .1 * cos(radians(current.hour * 30))),
         Paint()
           ..strokeWidth = 1
           ..isAntiAlias = true
           ..strokeCap = StrokeCap.round
           ..isAntiAlias = true
           ..style = PaintingStyle.stroke
-          ..color = dialColor ?? Colors.black);
+          ..color = Colors.black);
 
     // The center punch
 
