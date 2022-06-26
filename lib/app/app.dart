@@ -67,7 +67,6 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
         // extendBodyBehindAppBar: true,
-
         appBar: AppBar(
           toolbarHeight: 10.0,
           automaticallyImplyLeading: false,

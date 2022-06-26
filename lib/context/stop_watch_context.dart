@@ -19,7 +19,7 @@ class StopWatchContext extends ChangeNotifier {
 
   Duration _duration = const Duration();
 
-  Stream<StopWatchTime>? getStopWatch() =>
+  Stream<StopWatchTime>? get getStopWatch =>
       Stream.periodic(const Duration(milliseconds: 1000), (_) {
         if (_isStopWatchRunning) {
           final int seconds =

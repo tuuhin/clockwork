@@ -52,12 +52,17 @@ class ClockMainPainter extends CustomPainter {
           ..color = Colors.black87);
 
     /// [HOUR]
-    int hour = current.hour >= 12 ? current.hour - 11 : current.hour;
+
     canvas.drawLine(
-        Offset(size.width * .5 + size.width * .25 * sin(radians(hour * 30)),
-            size.height * .5 - size.height * .25 * cos(radians(hour * 30))),
-        Offset(size.width * .5 - size.width * .1 * sin(radians(hour * 30)),
-            size.width * .5 + size.width * .1 * cos(radians(hour * 30))),
+        Offset(
+            size.width * .5 +
+                size.width * .25 * sin(radians(current.hour * 30)),
+            size.height * .5 -
+                size.height * .25 * cos(radians(current.hour * 30))),
+        Offset(
+            size.width * .5 - size.width * .1 * sin(radians(current.hour * 30)),
+            size.width * .5 +
+                size.width * .1 * cos(radians(current.hour * 30))),
         Paint()
           ..strokeWidth = 5
           ..isAntiAlias = true
@@ -77,10 +82,6 @@ class ClockMainPainter extends CustomPainter {
 }
 
 class ClockPainterDial extends CustomPainter {
-  Color color;
-
-  ClockPainterDial({required this.color});
-
   @override
   void paint(Canvas canvas, Size size) {
     for (double i = 0; i <= 360; i += 5) {
@@ -93,7 +94,7 @@ class ClockPainterDial extends CustomPainter {
             ..strokeWidth = 1
             ..strokeCap = StrokeCap.round
             ..style = PaintingStyle.stroke
-            ..color = color);
+            ..color = Colors.grey);
     }
   }
 

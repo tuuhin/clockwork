@@ -31,28 +31,26 @@ class _StopWatchClockState extends State<StopWatchClock>
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
     final StopWatchTime _time = Provider.of<StopWatchTime>(context);
-
+    Color _shadowColor = const Color.fromARGB(255, 231, 231, 231);
     return Container(
-      height: _size.height * 0.35,
+      height: _size.height * 0.4,
       alignment: Alignment.center,
       child: Stack(
         alignment: Alignment.center,
         children: [
           SizedBox.square(
-            dimension: _size.width * .62,
+            dimension: _size.width * .6,
             child: Container(
-              decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                BoxShadow(
-                    color: Theme.of(context).cardColor,
-                    offset: const Offset(-20, -20),
-                    blurRadius: 40,
-                    spreadRadius: 2),
-                const BoxShadow(
-                    color: Color.fromARGB(255, 205, 205, 205),
-                    offset: Offset(20, 20),
-                    blurRadius: 40,
-                    spreadRadius: 2)
-              ]),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                        color: _shadowColor,
+                        offset: const Offset(0, 0),
+                        blurRadius: 40,
+                        spreadRadius: 2)
+                  ]),
             ),
           ),
           AnimatedBuilder(
@@ -61,13 +59,11 @@ class _StopWatchClockState extends State<StopWatchClock>
                 return Transform.rotate(
                   angle: radians(_rotate.value),
                   child: SizedBox.square(
-                    dimension: _size.width * 0.55,
+                    dimension: _size.width * 0.58,
                     child: Padding(
                       padding: const EdgeInsets.all(3),
                       child: CustomPaint(
-                        foregroundPainter: StopWatchPainter(
-                          dialColor: Colors.black87,
-                        ),
+                        painter: StopWatchPainter(),
                       ),
                     ),
                   ),
@@ -76,33 +72,53 @@ class _StopWatchClockState extends State<StopWatchClock>
           SizedBox.square(
             dimension: _size.width * .48,
             child: Container(
-              decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                      colors: [Colors.white, Colors.grey],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Theme.of(context).cardColor,
-                        offset: const Offset(-4, -4),
-                        blurRadius: 20,
-                        spreadRadius: 1),
-                    BoxShadow(
-                        color: Theme.of(context).cardColor,
-                        offset: const Offset(4, 4),
-                        blurRadius: 20,
-                        spreadRadius: 1)
-                  ]),
-            ),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                  BoxShadow(
+                    color: _shadowColor,
+                    blurRadius: 10,
+                    offset: const Offset(0, 0),
+                  ),
+                ])),
+          ),
+          SizedBox.square(
+            dimension: _size.width * .4,
+            child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                  BoxShadow(
+                    color: _shadowColor,
+                    blurRadius: 20,
+                    offset: const Offset(0, 0),
+                  ),
+                ])),
+          ),
+          SizedBox.square(
+            dimension: _size.width * .35,
+            child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                  BoxShadow(
+                    color: _shadowColor,
+                    blurRadius: 20,
+                    offset: const Offset(0, 0),
+                  ),
+                ])),
           ),
           Text(
             stopWatchFormat(_time),
             style: Theme.of(context).textTheme.headline4!.copyWith(
-                letterSpacing: 1.2,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Technology',
-                color: Colors.black),
+                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.bold,
+                  // fontFamily: 'Technology',
+                  color: Colors.black,
+                ),
           ),
         ],
       ),
