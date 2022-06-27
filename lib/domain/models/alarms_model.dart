@@ -1,29 +1,39 @@
 import 'package:hive/hive.dart';
-
+import 'package:stopwatch/domain/enums/enums.dart';
 part 'alarms_model.g.dart';
 
 @HiveType(typeId: 0)
 class AlarmsModel extends HiveObject {
   @HiveField(0)
-  DateTime at;
+  int id;
 
   @HiveField(1)
-  bool repeat;
+  DateTime at;
 
   @HiveField(2)
-  bool vibrate;
+  RepeatEnum repeat;
 
   @HiveField(3)
-  String? label;
+  bool vibrate;
 
   @HiveField(4)
+  String? label;
+
+  @HiveField(5)
   bool deleteAfterDone;
 
+  @HiveField(6)
+  bool isActive;
+
   AlarmsModel({
+    this.id = 0,
     required this.at,
-    required this.repeat,
-    required this.vibrate,
+    this.repeat = RepeatEnum.once,
+    this.vibrate = true,
     this.label,
-    required this.deleteAfterDone,
+    this.deleteAfterDone = false,
+    this.isActive = true,
   });
+
+  set setId(int id) => id = id;
 }

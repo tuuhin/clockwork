@@ -13,6 +13,11 @@ class Pallet {
         ),
       ),
     ),
+    listTileTheme: ListTileThemeData(
+        selectedColor: Colors.red,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+    bottomAppBarTheme:
+        const BottomAppBarTheme(elevation: 0, color: Colors.transparent),
     switchTheme: SwitchThemeData(
       trackColor: MaterialStateProperty.resolveWith<Color?>(
           (Set<MaterialState> states) => Colors.grey),
@@ -35,7 +40,7 @@ class Pallet {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       prefixIconColor: Colors.grey,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 5),
       border: OutlineInputBorder(
           borderSide: const BorderSide(width: 0, color: Colors.transparent),
           borderRadius: BorderRadius.circular(15)),

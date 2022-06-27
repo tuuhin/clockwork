@@ -27,4 +27,14 @@ class TimeZoneData {
       .isNotEmpty;
 
   void clearDetailedModels() async => await _details!.clear();
+
+  void removeIndividualModel(DetailedTimeZoneModel zone) {
+    for (var key in _details!.keys) {
+      if (_details!.get(key) == zone) {
+        _details!.delete(key);
+      }
+    }
+  }
+
+  int getIndex(zone) => _details!.values.toList().indexOf(zone);
 }

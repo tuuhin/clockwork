@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:provider/provider.dart';
 import 'package:stopwatch/context/alarm_context.dart';
+import 'package:stopwatch/domain/enums/repeat_enum.dart';
+import 'package:stopwatch/domain/models/models.dart';
 
 class AddAlarm extends StatefulWidget {
   const AddAlarm({Key? key}) : super(key: key);
@@ -10,47 +15,55 @@ class AddAlarm extends StatefulWidget {
 }
 
 class _AddAlarmState extends State<AddAlarm> {
-  final TextEditingController _labelController = TextEditingController();
+  late AlarmContext _alarmContext;
+  late TextEditingController _labelController;
+
   bool _isVibrate = false;
   bool _isDelete = true;
-  Repeat _repeat = Repeat.once;
-  String _label = '';
-  final DateTime _time = DateTime.now();
+  RepeatEnum _repeat = RepeatEnum.once;
 
-  void _onTimeChange(DateTime time) {
-    time = _time;
+  DateTime at = DateTime.now();
+
+  void _onTimeChange(DateTime time) => at = time;
+
+  void _addAlarm() {
+    print(at);
+    _alarmContext.addAlarms(AlarmsModel(
+        at: at,
+        repeat: _repeat,
+        vibrate: _isVibrate,
+        label: _labelController.text.isNotEmpty ? _labelController.text : null,
+        deleteAfterDone: _isDelete));
+    Navigator.of(context).pop();
   }
 
-  void _addAlarmLabel() {
+  void selectRepeatMode(RepeatEnum value) {
+    setState(() => _repeat = value);
     Navigator.of(context).pop();
-    setState(() {
-      _label = _labelController.text;
-      _labelController.text = '';
-    });
   }
 
   void _showRepeatBottomSheet() => showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  onTap: () => setState(() => _repeat = Repeat.once),
+                  onTap: () => selectRepeatMode(RepeatEnum.once),
                   title: Text('Once',
                       style: Theme.of(context)
                           .textTheme
-                          .headline6!
-                          .copyWith(fontWeight: FontWeight.w700)),
+                          .subtitle1!
+                          .copyWith(fontWeight: FontWeight.w600)),
                 ),
                 ListTile(
-                  onTap: () => setState(() => _repeat = Repeat.daily),
+                  onTap: () => selectRepeatMode(RepeatEnum.daily),
                   title: Text('Daily',
                       style: Theme.of(context)
                           .textTheme
-                          .headline6!
-                          .copyWith(fontWeight: FontWeight.w700)),
+                          .subtitle1!
+                          .copyWith(fontWeight: FontWeight.w600)),
                 ),
               ],
             ),
@@ -68,13 +81,14 @@ class _AddAlarmState extends State<AddAlarm> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Add Alarm Label',
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle2!
-                            .copyWith(fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 10),
+                    Text(
+                      'Label',
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          fontWeight: FontWeight.w600, wordSpacing: 1.2),
+                    ),
+                    const SizedBox(height: 15),
                     TextField(
+                      cursorColor: Colors.black,
                       keyboardType: TextInputType.name,
                       keyboardAppearance: Brightness.light,
                       controller: _labelController,
@@ -83,7 +97,7 @@ class _AddAlarmState extends State<AddAlarm> {
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             fixedSize: Size(_size.width, 50)),
-                        onPressed: _addAlarmLabel,
+                        onPressed: () => Navigator.of(context).pop(),
                         child: const Text('Add'))
                   ],
                 ),
@@ -92,31 +106,45 @@ class _AddAlarmState extends State<AddAlarm> {
   }
 
   @override
+  void initState() {
+    _labelController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _labelController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _alarmContext = Provider.of<AlarmContext>(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          children: [
-            Text('Add Alarm', style: Theme.of(context).textTheme.headline6),
-            Text('current time',
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ))
-          ],
-        ),
+        title: Text('Add Alarm',
+            style: Theme.of(context)
+                .textTheme
+                .headline6!
+                .copyWith(fontWeight: FontWeight.bold)),
         leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close, size: 30)),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.done, size: 30)),
+          IconButton(
+              onPressed: _addAlarm, icon: const Icon(Icons.done, size: 30)),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        child: ListView(
           children: [
-            const Spacer(),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -124,25 +152,28 @@ class _AddAlarmState extends State<AddAlarm> {
                   'Hour',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6!
-                      .copyWith(fontWeight: FontWeight.w700),
+                      .subtitle1!
+                      .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
                 ),
                 const SizedBox(width: 40),
                 Text(
                   'Minute',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6!
-                      .copyWith(fontWeight: FontWeight.w700),
+                      .subtitle1!
+                      .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
                 )
               ],
             ),
             TimePickerSpinner(
-              time: _time,
+              time: at,
               alignment: Alignment.center,
               is24HourMode: true,
               onTimeChange: _onTimeChange,
-              normalTextStyle: Theme.of(context).textTheme.headline6,
+              normalTextStyle: Theme.of(context)
+                  .textTheme
+                  .headline6!
+                  .copyWith(color: Colors.black54),
               highlightedTextStyle: Theme.of(context)
                   .textTheme
                   .headline5!
@@ -150,20 +181,20 @@ class _AddAlarmState extends State<AddAlarm> {
               itemHeight: 80,
               isForce2Digits: true,
             ),
-            const Spacer(),
+            const SizedBox(height: 10),
             ListTile(
               onTap: _showRepeatBottomSheet,
               title: Text(
                 'Repeat',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6!
-                    .copyWith(fontWeight: FontWeight.w700),
+                    .subtitle1!
+                    .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
               ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(_repeat == Repeat.once ? 'Once' : 'Daily'),
+                  Text(_repeat == RepeatEnum.once ? 'Once' : 'Daily'),
                   const Icon(Icons.chevron_right)
                 ],
               ),
@@ -175,8 +206,8 @@ class _AddAlarmState extends State<AddAlarm> {
                   'Vibrate when alarm sounds',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6!
-                      .copyWith(fontWeight: FontWeight.w700),
+                      .subtitle1!
+                      .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
                 )),
             SwitchListTile(
                 value: _isDelete,
@@ -185,8 +216,8 @@ class _AddAlarmState extends State<AddAlarm> {
                   'Delete after it goes off',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6!
-                      .copyWith(fontWeight: FontWeight.w700),
+                      .subtitle1!
+                      .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
                 )),
             ListTile(
               onTap: _showLabelBottonSheet,
@@ -194,16 +225,13 @@ class _AddAlarmState extends State<AddAlarm> {
                 'Label',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6!
-                    .copyWith(fontWeight: FontWeight.w700),
+                    .subtitle1!
+                    .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(_label, style: Theme.of(context).textTheme.caption),
-                  const Icon(Icons.chevron_right),
-                ],
-              ),
+              trailing: _labelController.text.isEmpty
+                  ? const Icon(Icons.chevron_right)
+                  : Text(_labelController.text,
+                      style: Theme.of(context).textTheme.caption),
             ),
           ],
         ),

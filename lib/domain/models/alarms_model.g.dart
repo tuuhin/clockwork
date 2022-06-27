@@ -17,28 +17,34 @@ class AlarmsModelAdapter extends TypeAdapter<AlarmsModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AlarmsModel(
-      at: fields[0] as DateTime,
-      repeat: fields[1] as bool,
-      vibrate: fields[2] as bool,
-      label: fields[3] as String?,
-      deleteAfterDone: fields[4] as bool,
+      id: fields[0] as int,
+      at: fields[1] as DateTime,
+      repeat: fields[2] as RepeatEnum,
+      vibrate: fields[3] as bool,
+      label: fields[4] as String?,
+      deleteAfterDone: fields[5] as bool,
+      isActive: fields[6] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, AlarmsModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.at)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.repeat)
+      ..write(obj.at)
       ..writeByte(2)
-      ..write(obj.vibrate)
+      ..write(obj.repeat)
       ..writeByte(3)
-      ..write(obj.label)
+      ..write(obj.vibrate)
       ..writeByte(4)
-      ..write(obj.deleteAfterDone);
+      ..write(obj.label)
+      ..writeByte(5)
+      ..write(obj.deleteAfterDone)
+      ..writeByte(6)
+      ..write(obj.isActive);
   }
 
   @override

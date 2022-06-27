@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/routes/add_alarms.dart';
+import 'package:stopwatch/app/routes/routes.dart';
+import 'package:stopwatch/app/widgets/alarm/alarm_card.dart';
+import 'package:stopwatch/app/widgets/alarm/alarms_list.dart';
 import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/service/notifications/notifications_service.dart';
+import 'package:stopwatch/service/services.dart';
 import 'package:stopwatch/utils/utils.dart';
 
 class AlarmTab extends StatefulWidget {
@@ -21,23 +24,15 @@ class _AlarmTabState extends State<AlarmTab> {
     _alarmContext = Provider.of<AlarmContext>(context);
   }
 
-  void onPressed() {
-    NotificationService.showNotification(title: 'cat', body: 'none');
-  }
-
   void addAlarm() => Navigator.of(context).push(alarmRoute());
 
   @override
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
+    print(_alarmContext.alarms);
     return Scaffold(
         body: _alarmContext.alarms.isNotEmpty
-            ? Column(
-                children: [
-                  const Text('alarms'),
-                  ElevatedButton(onPressed: onPressed, child: Text('data')),
-                ],
-              )
+            ? const AlarmsList()
             : SizedBox.expand(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -67,23 +62,21 @@ class _AlarmTabState extends State<AlarmTab> {
   }
 }
 
-Route alarmRoute() => PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 300),
-      reverseTransitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: ((context, animation, secondaryAnimation) {
-        Animation<double> _opacity =
-            Tween<double>(begin: 0.0, end: 1.0).animate(animation);
-        Animation<Offset> _offset = Tween<Offset>(
-                begin: const Offset(1, 0), end: const Offset(0, 0))
-            .animate(
-                CurvedAnimation(parent: animation, curve: Curves.decelerate));
-
-        return SlideTransition(
-          position: _offset,
-          child: FadeTransition(
-            opacity: _opacity,
-            child: const AddAlarm(),
-          ),
-        );
-      }),
-    );
+Route alarmRoute() {
+  final Tween<Offset> _offset =
+      Tween<Offset>(begin: const Offset(1, 0), end: const Offset(0, 0));
+  final Tween<double> _opacity = Tween<double>(begin: 0.0, end: 1.0);
+  return PageRouteBuilder(
+    transitionDuration: const Duration(milliseconds: 500),
+    reverseTransitionDuration: const Duration(milliseconds: 500),
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return FadeTransition(
+        opacity: animation.drive(_opacity),
+        child: SlideTransition(
+          position: animation.drive(_offset),
+          child: const AddAlarm(),
+        ),
+      );
+    },
+  );
+}
