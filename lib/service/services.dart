@@ -1,2 +1,2 @@
-export './notifications/notifications_service.dart';
-export './alarm/alarm_service.dart';
+export 'notifications_service.dart';
+export 'alarm_service.dart';
