@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
 import 'package:stopwatch/context/alarm_context.dart';
 import 'package:stopwatch/domain/enums/repeat_enum.dart';
@@ -24,21 +22,29 @@ class _AddAlarmState extends State<AddAlarm> {
 
   DateTime at = DateTime.now();
 
-  void _onTimeChange(DateTime time) => at = time;
+  void _onTimeChange(DateTime time) {
+    at = time.subtract(Duration(seconds: time.second));
+  }
 
   void _addAlarm() {
-    print(at);
-    _alarmContext.addAlarms(AlarmsModel(
+    print(_isDelete);
+    _alarmContext.addAlarms(
+      AlarmsModel(
         at: at,
         repeat: _repeat,
         vibrate: _isVibrate,
         label: _labelController.text.isNotEmpty ? _labelController.text : null,
-        deleteAfterDone: _isDelete));
+        deleteAfterDone: _isDelete,
+      ),
+    );
     Navigator.of(context).pop();
   }
 
   void selectRepeatMode(RepeatEnum value) {
     setState(() => _repeat = value);
+    if (_repeat == RepeatEnum.daily) {
+      _isDelete = false;
+    }
     Navigator.of(context).pop();
   }
 
@@ -142,7 +148,7 @@ class _AddAlarmState extends State<AddAlarm> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-        child: ListView(
+        child: Column(
           children: [
             const SizedBox(height: 10),
             Row(
@@ -182,57 +188,63 @@ class _AddAlarmState extends State<AddAlarm> {
               isForce2Digits: true,
             ),
             const SizedBox(height: 10),
-            ListTile(
-              onTap: _showRepeatBottomSheet,
-              title: Text(
-                'Repeat',
-                style: Theme.of(context)
-                    .textTheme
-                    .subtitle1!
-                    .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
+            Expanded(
+              child: ListView(
                 children: [
-                  Text(_repeat == RepeatEnum.once ? 'Once' : 'Daily'),
-                  const Icon(Icons.chevron_right)
+                  ListTile(
+                    onTap: _showRepeatBottomSheet,
+                    title: Text(
+                      'Repeat',
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          fontWeight: FontWeight.w600, wordSpacing: 1.2),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(_repeat == RepeatEnum.once ? 'Once' : 'Daily'),
+                        const Icon(Icons.chevron_right)
+                      ],
+                    ),
+                  ),
+                  SwitchListTile(
+                      value: _isVibrate,
+                      onChanged: (t) =>
+                          setState(() => _isVibrate = !_isVibrate),
+                      title: Text(
+                        'Vibrate when alarm sounds',
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            fontWeight: FontWeight.w600, wordSpacing: 1.2),
+                      )),
+                  if (_repeat == RepeatEnum.once)
+                    SwitchListTile(
+                        value: _isDelete,
+                        onChanged: (t) =>
+                            setState(() => _isDelete = !_isDelete),
+                        title: Text(
+                          'Delete after it goes off',
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  wordSpacing: 1.2),
+                        )),
+                  ListTile(
+                    onTap: _showLabelBottonSheet,
+                    title: Text(
+                      'Label',
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          fontWeight: FontWeight.w600, wordSpacing: 1.2),
+                    ),
+                    trailing: _labelController.text.isEmpty
+                        ? const Icon(Icons.chevron_right)
+                        : Text(_labelController.text,
+                            style: Theme.of(context).textTheme.caption),
+                  ),
                 ],
               ),
             ),
-            SwitchListTile(
-                value: _isVibrate,
-                onChanged: (t) => setState(() => _isVibrate = !_isVibrate),
-                title: Text(
-                  'Vibrate when alarm sounds',
-                  style: Theme.of(context)
-                      .textTheme
-                      .subtitle1!
-                      .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
-                )),
-            SwitchListTile(
-                value: _isDelete,
-                onChanged: (t) => setState(() => _isDelete = !_isDelete),
-                title: Text(
-                  'Delete after it goes off',
-                  style: Theme.of(context)
-                      .textTheme
-                      .subtitle1!
-                      .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
-                )),
-            ListTile(
-              onTap: _showLabelBottonSheet,
-              title: Text(
-                'Label',
-                style: Theme.of(context)
-                    .textTheme
-                    .subtitle1!
-                    .copyWith(fontWeight: FontWeight.w600, wordSpacing: 1.2),
-              ),
-              trailing: _labelController.text.isEmpty
-                  ? const Icon(Icons.chevron_right)
-                  : Text(_labelController.text,
-                      style: Theme.of(context).textTheme.caption),
-            ),
+            const SizedBox(height: 30)
           ],
         ),
       ),

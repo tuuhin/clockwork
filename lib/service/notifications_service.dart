@@ -35,22 +35,21 @@ class NotificationService {
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     );
 
-    final NotificationAppLaunchDetails? _details =
-        await _notificationBase.getNotificationAppLaunchDetails();
-
-    await _notificationStatic.initialize(settings,
-        onSelectNotification: (payload) async {
-      IsolateNameServer.lookupPortByName(portName)?.send('stop');
-      if (payload != null && int.tryParse(payload) != null) {
-        int id = int.parse(payload);
-        _notificationStatic.cancel(id);
-      }
-    });
-
     await _notificationBase.initialize(
       settings,
       onSelectNotification: (payload) async {
         print(payload);
+      },
+    );
+
+    await _notificationStatic.initialize(
+      settings,
+      onSelectNotification: (payload) async {
+        IsolateNameServer.lookupPortByName(portName)?.send('stop');
+        if (payload != null && int.tryParse(payload) != null) {
+          int id = int.parse(payload);
+          _notificationStatic.cancel(id);
+        }
       },
     );
   }
@@ -68,6 +67,8 @@ class NotificationService {
       payload: id.toString(),
     );
   }
+
+  Future cancelBaseNotification(int id) async => _notificationBase.cancel(id);
 
   static Future showBaseNotification({
     required int id,

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:stopwatch/app/routes/routes.dart';
-import 'package:stopwatch/app/widgets/alarm/alarm_card.dart';
 import 'package:stopwatch/app/widgets/alarm/alarms_list.dart';
 import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/service/services.dart';
 import 'package:stopwatch/utils/utils.dart';
 
 class AlarmTab extends StatefulWidget {
@@ -24,28 +21,42 @@ class _AlarmTabState extends State<AlarmTab> {
     _alarmContext = Provider.of<AlarmContext>(context);
   }
 
-  void addAlarm() => Navigator.of(context).push(alarmRoute());
+  void addAlarm() async => await Navigator.of(context).push(alarmRoute());
 
   @override
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
-    print(_alarmContext.alarms);
+
     return Scaffold(
-        body: _alarmContext.alarms.isNotEmpty
-            ? const AlarmsList()
-            : SizedBox.expand(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox.square(
-                        dimension: _size.width * .4, child: alarmImage),
-                    const SizedBox(height: 20),
-                    Text('No alarms',
-                        style: Theme.of(context).textTheme.subtitle1)
-                  ],
+        body: AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          child: _alarmContext.alarms.isNotEmpty
+              ? const AlarmsList()
+              : SizedBox.expand(
+                  child: TweenAnimationBuilder(
+                    duration: const Duration(milliseconds: 400),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    builder: (context, double animation, child) {
+                      return AnimatedOpacity(
+                        opacity: animation,
+                        duration: const Duration(milliseconds: 400),
+                        child: child,
+                      );
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox.square(
+                            dimension: _size.width * .4, child: alarmImage),
+                        const SizedBox(height: 20),
+                        Text('No alarms'.toUpperCase(),
+                            style: Theme.of(context).textTheme.subtitle1)
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+        ),
         bottomNavigationBar: BottomAppBar(
           child: SizedBox(
             height: 64,
