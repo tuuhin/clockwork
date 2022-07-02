@@ -14,16 +14,10 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   final List<Widget> _tabs = const [
     AlarmTab(),
     StopwatchTab(),
-    TimmerTab(),
     ClocksTab(),
   ];
 
-  final List<String> _tabsName = const [
-    'Alarm',
-    'Stopwatch',
-    'Timmer',
-    'Clock'
-  ];
+  final List<String> _tabsName = const ['Alarm', 'Stopwatch', 'Clock'];
   int _currentIndex = 0;
 
   @override
@@ -31,7 +25,7 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
     super.initState();
     _tabController = TabController(
       initialIndex: _currentIndex,
-      length: 4,
+      length: 3,
       vsync: this,
     );
 
@@ -66,9 +60,9 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // extendBodyBehindAppBar: true,
+        drawerEnableOpenDragGesture: false,
         appBar: AppBar(
-          toolbarHeight: 10.0,
+          toolbarHeight: 10,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -82,7 +76,6 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
                         index,
                         Tab(
                           child: AnimatedContainer(
-                            curve: Curves.easeInOut,
                             duration: const Duration(milliseconds: 400),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),

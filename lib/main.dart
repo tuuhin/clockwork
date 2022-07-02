@@ -51,7 +51,8 @@ class ProviderWrappers extends StatelessWidget {
           initialData: const [],
         ),
         ChangeNotifierProvider<TimeZoneContext>(
-            create: (context) => _timezoneContext),
+          create: (context) => _timezoneContext,
+        ),
         ChangeNotifierProvider<AlarmContext>(
           create: (context) => _alarmContext,
         )
