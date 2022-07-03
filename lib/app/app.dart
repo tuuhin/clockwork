@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stopwatch/app/app_drawer.dart';
 import 'package:stopwatch/app/tabs/tabs.dart';
 
 class App extends StatefulWidget {
@@ -61,11 +62,19 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
         drawerEnableOpenDragGesture: false,
+        drawer: const AppDrawer(),
         appBar: AppBar(
-          toolbarHeight: 10,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            )
+          ],
           bottom: TabBar(
               padding: const EdgeInsets.symmetric(horizontal: 1),
               controller: _tabController,
