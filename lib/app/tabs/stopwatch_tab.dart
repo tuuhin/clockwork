@@ -38,7 +38,7 @@ class _StopwatchTabState extends State<StopwatchTab>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 20),
+      duration: const Duration(seconds: 30),
     );
   }
 

@@ -31,9 +31,9 @@ class _StopWatchClockState extends State<StopWatchClock>
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
     final StopWatchTime _time = Provider.of<StopWatchTime>(context);
-    Color _shadowColor = const Color.fromARGB(255, 231, 231, 231);
+
     return Container(
-      height: _size.height * 0.4,
+      height: _size.height * 0.35,
       alignment: Alignment.center,
       child: Stack(
         alignment: Alignment.center,
@@ -41,15 +41,20 @@ class _StopWatchClockState extends State<StopWatchClock>
           SizedBox.square(
             dimension: _size.width * .6,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                        color: _shadowColor,
-                        offset: const Offset(0, 0),
-                        blurRadius: 40,
-                        spreadRadius: 2)
+                        color: Colors.grey,
+                        offset: Offset(2, 2),
+                        blurRadius: 2,
+                        spreadRadius: .1),
+                    BoxShadow(
+                        color: Colors.white,
+                        offset: Offset(1, 1),
+                        blurRadius: 4,
+                        spreadRadius: .1),
                   ]),
             ),
           ),
@@ -59,57 +64,66 @@ class _StopWatchClockState extends State<StopWatchClock>
                 return Transform.rotate(
                   angle: radians(_rotate.value),
                   child: SizedBox.square(
-                    dimension: _size.width * 0.58,
-                    child: Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: CustomPaint(
-                        painter: StopWatchPainter(),
-                      ),
+                    dimension: _size.width * 0.56,
+                    child: CustomPaint(
+                      painter: StopWatchPainter(),
                     ),
                   ),
                 );
               }),
           SizedBox.square(
-            dimension: _size.width * .48,
+            dimension: _size.width * .45,
             child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: [
                   BoxShadow(
-                    color: _shadowColor,
-                    blurRadius: 10,
-                    offset: const Offset(0, 0),
-                  ),
-                ])),
-          ),
-          SizedBox.square(
-            dimension: _size.width * .4,
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
+                      color: Colors.grey,
+                      offset: Offset(0, 0),
+                      blurRadius: 1,
+                      spreadRadius: .1),
                   BoxShadow(
-                    color: _shadowColor,
-                    blurRadius: 20,
-                    offset: const Offset(0, 0),
-                  ),
+                      color: Colors.white,
+                      offset: Offset(1, 1),
+                      blurRadius: 1,
+                      spreadRadius: .1)
                 ])),
           ),
           SizedBox.square(
             dimension: _size.width * .35,
             child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: [
                   BoxShadow(
-                    color: _shadowColor,
-                    blurRadius: 20,
-                    offset: const Offset(0, 0),
-                  ),
+                      color: Colors.grey,
+                      offset: Offset(0, 0),
+                      blurRadius: 1,
+                      spreadRadius: .1),
+                  BoxShadow(
+                      color: Colors.white,
+                      offset: Offset(-1, -1),
+                      blurRadius: 1,
+                      spreadRadius: .1)
                 ])),
+          ),
+          SizedBox.square(
+            dimension: _size.width * .45,
+            child: AnimatedBuilder(
+              animation: widget.controller,
+              builder: (context, animation) {
+                return Transform(
+                  alignment: FractionalOffset.center,
+                  transform: Matrix4.identity()
+                    ..rotateZ(radians(_rotate.value * -1)),
+                  child: CustomPaint(
+                    painter: Sprinkle(),
+                  ),
+                );
+              },
+            ),
           ),
           Text(
             stopWatchFormat(_time),
