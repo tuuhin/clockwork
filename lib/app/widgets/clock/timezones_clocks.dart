@@ -42,7 +42,7 @@ class _TimeZonesClockState extends State<TimeZonesClock> {
   }
 
   final Tween<Offset> _offset = Tween<Offset>(
-    begin: const Offset(-1, 0),
+    begin: const Offset(0, -1),
     end: const Offset(0, 0),
   );
 

@@ -24,18 +24,13 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      initialIndex: _currentIndex,
-      length: 3,
-      vsync: this,
-    );
+    _tabController =
+        TabController(initialIndex: _currentIndex, length: 3, vsync: this);
 
     _tabController.addListener(() {
       if (_tabController.index != _currentIndex &&
           !_tabController.indexIsChanging) {
-        setState(() {
-          _currentIndex = _tabController.index;
-        });
+        setState(() => _currentIndex = _tabController.index);
       }
     });
   }
@@ -54,7 +49,6 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
-
     super.dispose();
   }
 
@@ -85,7 +79,7 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
                         index,
                         Tab(
                           child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 400),
+                            duration: const Duration(milliseconds: 200),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               color: _currentIndex == index

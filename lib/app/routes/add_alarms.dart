@@ -20,7 +20,7 @@ class _AddAlarmState extends State<AddAlarm> {
   bool _isDelete = true;
   RepeatEnum _repeat = RepeatEnum.once;
 
-  DateTime at = DateTime.now();
+  DateTime at = DateTime.now().add(const Duration(minutes: 1));
 
   void _onTimeChange(DateTime time) {
     at = time.subtract(Duration(seconds: time.second));

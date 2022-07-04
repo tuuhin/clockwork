@@ -27,7 +27,7 @@ class _ClockCardState extends State<ClockCard> {
   Widget build(BuildContext context) {
     Provider.of<ClockTime>(context);
     DateTime _current = getime(widget.zone.offset);
-    bool _isDay = _current.hour > 6 && _current.hour < 16;
+    bool _isDay = _current.hour >= 6 && _current.hour <= 16;
     return Dismissible(
       direction: DismissDirection.endToStart,
       confirmDismiss: (direction) async {

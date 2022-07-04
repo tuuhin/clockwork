@@ -46,9 +46,8 @@ class _AnalogClockState extends State<AnalogClock>
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
     final ClockTime _clck = Provider.of<ClockTime>(context);
-    return Container(
+    return SizedBox(
       height: _size.height * 0.35,
-      alignment: Alignment.center,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -75,7 +74,7 @@ class _AnalogClockState extends State<AnalogClock>
                   child: SizedBox.square(
                     dimension: _size.width * 0.56,
                     child: CustomPaint(
-                      painter: ClockPainterDial(color: Colors.grey),
+                      painter: ClockPainterDial(),
                     ),
                   ),
                 );

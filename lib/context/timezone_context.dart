@@ -59,8 +59,10 @@ class TimeZoneContext extends ChangeNotifier {
 
   void removeIndividualModel(DetailedTimeZoneModel zone) {
     int index = _data.getIndex(zone);
-    _globalKey.currentState!
-        .removeItem(index, (context, animation) => const SizedBox());
+    if (_globalKey.currentState != null) {
+      _globalKey.currentState!
+          .removeItem(index, (context, animation) => const SizedBox());
+    }
     _data.removeIndividualModel(zone);
     notifyListeners();
   }

@@ -24,15 +24,23 @@ class AlarmContext extends ChangeNotifier {
     }
   }
 
-  void removeAlarm(AlarmsModel alarm) {
+  void removeAlarm(AlarmsModel alarm) async {
     int index = _alarmData.getIndex(alarm);
-    _key.currentState!.removeItem(
-      index,
-      (context, animation) => const SizedBox(),
-    );
+    if (_key.currentState != null) {
+      _key.currentState!.removeItem(
+        index,
+        (context, animation) => const SizedBox(),
+      );
+    }
     _alarmData.removeAlarm(alarm);
-    _alarmService.cancelAlarm(alarm.id);
+    await _alarmService.cancelAlarm(alarm.id);
     notifyListeners();
+  }
+
+  void removeAllAlarms() {
+    for (AlarmsModel alarm in _alarmData.getAlarms()) {
+      removeAlarm(alarm);
+    }
   }
 
   void changeAlarmMode(AlarmsModel alarm, bool active) async {

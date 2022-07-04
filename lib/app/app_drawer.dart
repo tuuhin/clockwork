@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:stopwatch/app/tabs/alarm_tab.dart';
+import 'package:stopwatch/app/tabs/clocks_tab.dart';
 import 'package:stopwatch/context/context.dart';
 import 'package:stopwatch/utils/images.dart';
 
@@ -22,16 +24,15 @@ class _AppDrawerState extends State<AppDrawer> {
     _timeZoneContext = Provider.of<TimeZoneContext>(context);
   }
 
-  void _showDialog(String text, [String? desc]) async {
+  void _showDialog(String text) async {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(text),
-        content: desc != null ? Text(desc) : null,
+        title: Text(text, style: Theme.of(context).textTheme.subtitle1),
         actions: [
-          IconButton(
+          ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Text('Ok'),
+            child: const Text('Ok'),
           )
         ],
       ),
@@ -47,6 +48,14 @@ class _AppDrawerState extends State<AppDrawer> {
     _timeZoneContext.removeDetailedModels();
     _showDialog('All the selected cities are removed');
   }
+
+  void _addAlarm() => Navigator.of(context)
+    ..pop()
+    ..push(alarmRoute());
+
+  void _addCity() => Navigator.of(context)
+    ..pop()
+    ..push(clockLocations());
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +80,19 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           const Divider(),
+          ListTile(
+            onTap: _addAlarm,
+            leading: const Icon(Icons.alarm_add),
+            title: const Text('Add a alarm'),
+            subtitle: const Text('Creates a alarm at a given time'),
+          ),
+          ListTile(
+            onTap: _addCity,
+            leading: const Icon(Icons.location_city),
+            title: const Text('Add a city '),
+            subtitle:
+                const Text('Add a city from the locations to the clock tab'),
+          ),
           ListTile(
             onTap: removeAlarms,
             leading: const Icon(Icons.delete_outlined),

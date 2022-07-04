@@ -11,7 +11,7 @@ class ClockLocations extends StatefulWidget {
 }
 
 class _ClockLocationsState extends State<ClockLocations> {
-  final TextEditingController _controller = TextEditingController(text: '');
+  late TextEditingController _controller;
   late ScrollController _scrollController;
   late TimeZoneContext _timeZoneContext;
 
@@ -21,6 +21,7 @@ class _ClockLocationsState extends State<ClockLocations> {
   @override
   void initState() {
     super.initState();
+    _controller = TextEditingController();
     _scrollController = ScrollController();
   }
 
@@ -40,6 +41,13 @@ class _ClockLocationsState extends State<ClockLocations> {
     });
 
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _controller.dispose();
+    super.dispose();
   }
 
   void selectCity(TimeZoneModel zone) async {

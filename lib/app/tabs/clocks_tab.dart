@@ -18,7 +18,6 @@ class _ClocksTabState extends State<ClocksTab> {
   @override
   void didChangeDependencies() {
     _clck = Provider.of<ClockTime>(context);
-
     super.didChangeDependencies();
   }
 
