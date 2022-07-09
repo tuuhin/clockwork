@@ -10,10 +10,10 @@ class TimeZoneData {
     _details = await Hive.openBox<DetailedTimeZoneModel>('detailed_time_zones');
   }
 
-  void addZone(TimeZoneModel timeZone) => _box!.add(timeZone);
+  void addZone(TimeZoneModel timeZone) async => await _box!.add(timeZone);
 
-  void addDetailedZone(DetailedTimeZoneModel timeZone) =>
-      _details!.add(timeZone);
+  void addDetailedZone(DetailedTimeZoneModel timeZone) async =>
+      await _details!.add(timeZone);
 
   List<TimeZoneModel> getAllZones() => _box!.values.toList();
 
@@ -26,12 +26,12 @@ class TimeZoneData {
           element.location == zone.region && element.area == element.area)
       .isNotEmpty;
 
-  void clearDetailedModels() async => await _details!.clear();
+  Future<void> clearDetailedModels() async => await _details!.clear();
 
-  void removeIndividualModel(DetailedTimeZoneModel zone) {
+  Future<void> removeIndividualModel(DetailedTimeZoneModel zone) async {
     for (var key in _details!.keys) {
       if (_details!.get(key) == zone) {
-        _details!.delete(key);
+        await _details!.delete(key);
       }
     }
   }

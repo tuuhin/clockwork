@@ -8,7 +8,7 @@ part of 'detailed_timezone_model.dart';
 
 class DetailedTimeZoneModelAdapter extends TypeAdapter<DetailedTimeZoneModel> {
   @override
-  final int typeId = 3;
+  final int typeId = 2;
 
   @override
   DetailedTimeZoneModel read(BinaryReader reader) {

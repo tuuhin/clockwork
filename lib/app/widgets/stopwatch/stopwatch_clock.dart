@@ -30,7 +30,8 @@ class _StopWatchClockState extends State<StopWatchClock>
   @override
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
-    final StopWatchTime _time = Provider.of<StopWatchTime>(context);
+    final CurrentStopWatchTime _time =
+        Provider.of<CurrentStopWatchTime>(context);
 
     return Container(
       height: _size.height * 0.35,

@@ -2,8 +2,8 @@ import 'package:hive/hive.dart';
 
 part 'detailed_timezone_model.g.dart';
 
-@HiveType(typeId: 03)
-class DetailedTimeZoneModel {
+@HiveType(typeId: 02)
+class DetailedTimeZoneModel extends HiveObject {
   @HiveField(0)
   String location;
 

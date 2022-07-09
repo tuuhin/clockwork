@@ -3,7 +3,7 @@ import 'package:hive_flutter/adapters.dart';
 part 'timezone_model.g.dart';
 
 @HiveType(typeId: 01)
-class TimeZoneModel {
+class TimeZoneModel extends HiveObject {
   @HiveField(0)
   String area;
 

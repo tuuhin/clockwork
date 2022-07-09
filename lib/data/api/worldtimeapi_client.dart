@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:stopwatch/domain/mappers/mapper.dart';
 import 'package:stopwatch/domain/models/models.dart';
 
 class WorldTimeApiClient {
@@ -22,7 +21,7 @@ class WorldTimeApiClient {
     try {
       http.Response _resp =
           await http.get(_uri).timeout(const Duration(seconds: 10));
-      print('i am called');
+
       if (_resp.statusCode == 200) {
         List _timeZones = jsonDecode(_resp.body) as List;
         return _timeZones;
@@ -33,6 +32,25 @@ class WorldTimeApiClient {
       print('socket exception ');
     } catch (e) {
       print(e.toString());
+    }
+    return null;
+  }
+
+  TimeZoneModel? zoneToModel(String endpoint) {
+    List<String> _enties = endpoint.split('/');
+    if (_enties.length == 2) {
+      return TimeZoneModel(
+        area: _enties[0],
+        location: _enties[1],
+        endpoint: endpoint,
+      );
+    }
+    if (_enties.length == 3) {
+      return TimeZoneModel(
+          area: _enties[0],
+          location: _enties[1],
+          region: _enties[2],
+          endpoint: endpoint);
     }
     return null;
   }

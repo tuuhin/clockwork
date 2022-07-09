@@ -6,7 +6,7 @@ import 'package:stopwatch/utils/utils.dart';
 
 class StopWatchLapsCard extends StatefulWidget {
   final int lapNumber;
-  final StopWatchTime time;
+  final Duration time;
   const StopWatchLapsCard({
     Key? key,
     required this.lapNumber,
