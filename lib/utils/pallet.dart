@@ -65,6 +65,7 @@ class Pallet {
         borderRadius: BorderRadius.circular(15),
       ),
     )),
+    drawerTheme: const DrawerThemeData(elevation: 0),
     floatingActionButtonTheme:
         const FloatingActionButtonThemeData(backgroundColor: Colors.black),
     textButtonTheme:

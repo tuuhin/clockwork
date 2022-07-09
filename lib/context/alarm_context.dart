@@ -43,6 +43,9 @@ class AlarmContext extends ChangeNotifier {
     }
   }
 
+  bool isAlarmAlreadyExists(AlarmsModel alarm) =>
+      _alarmData.isAlarmAlreadyExists(alarm);
+
   void changeAlarmMode(AlarmsModel alarm, bool active) async {
     alarm.setIsActive = active;
     await alarm.save();

@@ -28,4 +28,9 @@ class AlarmData {
   }
 
   int getIndex(zone) => _alarmsBox!.values.toList().indexOf(zone);
+
+  bool isAlarmAlreadyExists(AlarmsModel model) => _alarmsBox!.values
+      .toList()
+      .where((element) => element.at == model.at)
+      .isNotEmpty;
 }

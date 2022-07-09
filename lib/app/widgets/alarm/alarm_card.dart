@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:provider/provider.dart';
 import 'package:stopwatch/context/context.dart';
 import 'package:stopwatch/domain/enums/enums.dart';
@@ -36,14 +37,15 @@ class _AlarmCardState extends State<AlarmCard> {
       },
       onDismissed: (direction) => _alarmContext.removeAlarm(widget.model),
       background: Card(
-          color: Colors.black,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              SizedBox(width: 20),
-              Icon(Icons.delete_outline, color: Colors.white),
-            ],
-          )),
+        color: Colors.black,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            SizedBox(width: 20),
+            Icon(Icons.delete_outline, color: Colors.white),
+          ],
+        ),
+      ),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -72,9 +74,15 @@ class _AlarmCardState extends State<AlarmCard> {
                         )
                       ]
                     : [])),
-            subtitle: Text(
-              widget.model.repeat == RepeatEnum.daily ? 'Daily' : 'Once',
-            ),
+            subtitle: !widget.model.isActive
+                ? Text(
+                    widget.model.repeat == RepeatEnum.daily ? 'Daily' : 'Once',
+                  )
+                : AnimatedRelativeDateTimeBuilder(
+                    date: widget.model.at,
+                    builder: (time, str) {
+                      return Text(str);
+                    }),
             trailing: Switch(
                 value: widget.model.isActive,
                 onChanged: (bool ch) {

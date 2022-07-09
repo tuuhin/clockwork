@@ -27,17 +27,35 @@ class _AddAlarmState extends State<AddAlarm> {
   }
 
   void _addAlarm() {
-    print(_isDelete);
-    _alarmContext.addAlarms(
-      AlarmsModel(
-        at: at,
-        repeat: _repeat,
-        vibrate: _isVibrate,
-        label: _labelController.text.isNotEmpty ? _labelController.text : null,
-        deleteAfterDone: _isDelete,
+    AlarmsModel _alarm = AlarmsModel(
+      at: at,
+      repeat: _repeat,
+      vibrate: _isVibrate,
+      label: _labelController.text.isNotEmpty ? _labelController.text : null,
+      deleteAfterDone: _isDelete,
+    );
+    bool _itExists = _alarmContext.isAlarmAlreadyExists(_alarm);
+    print(_itExists);
+    if (!_itExists) {
+      _alarmContext.addAlarms(_alarm);
+      return Navigator.of(context).pop();
+    }
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Failed to create an alarm'),
+        content: const Text(
+            'There is a alarm already assigned to this  particular time'),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(context)
+              ..pop()
+              ..pop(),
+            child: const Text('OK I got it !'),
+          )
+        ],
       ),
     );
-    Navigator.of(context).pop();
   }
 
   void selectRepeatMode(RepeatEnum value) {
