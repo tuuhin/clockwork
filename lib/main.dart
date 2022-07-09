@@ -38,7 +38,7 @@ class ProviderWrappers extends StatelessWidget {
         ChangeNotifierProvider<StopWatchContext>(
           create: (context) => _stopWatchContext,
         ),
-        StreamProvider<StopWatchTime>(
+        StreamProvider<CurrentStopWatchTime>(
           create: (context) => _stopWatchContext.getStopWatch,
           initialData: const Duration(),
         ),

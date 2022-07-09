@@ -49,6 +49,7 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
+
     super.dispose();
   }
 
