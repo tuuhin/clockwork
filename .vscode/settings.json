@@ -3,5 +3,6 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "Dart-Code.dart-code",
   "dart.previewFlutterUiGuides": true,
- 
+  "dart.lineLength": 80,
+  "editor.tabSize": 2
 }
