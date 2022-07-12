@@ -27,6 +27,9 @@ class _AddAlarmState extends State<AddAlarm> {
   }
 
   void _addAlarm() {
+    if (at.hour < DateTime.now().hour) {
+      at = at.add(const Duration(days: 1));
+    }
     AlarmsModel _alarm = AlarmsModel(
       at: at,
       repeat: _repeat,

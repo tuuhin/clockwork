@@ -11,7 +11,7 @@ import 'package:stopwatch/service/services.dart';
 import 'package:stopwatch/utils/time_formatter.dart';
 
 class AlarmService {
-  static const double _volume = 0.4;
+  static const double _volume = 1;
   static LazyBox<AlarmsModel>? _alarmsBox;
   final NotificationService _notificationService = NotificationService();
 
