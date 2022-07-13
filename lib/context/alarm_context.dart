@@ -47,8 +47,16 @@ class AlarmContext extends ChangeNotifier {
       _alarmData.isAlarmAlreadyExists(alarm);
 
   void changeAlarmMode(AlarmsModel alarm, bool active) async {
+    if (active && DateTime.now().day > alarm.at.day) {
+      alarm.at.add(Duration(days: DateTime.now().day - alarm.at.day));
+    }
+
+    if (active && alarm.at.hour < DateTime.now().hour) {
+      alarm.at.add(const Duration(days: 1));
+    }
     alarm.setIsActive = active;
     await alarm.save();
+    print(alarm);
     if (alarm.isActive) {
       _alarmService.createAlarm(alarm);
       print('alarm created');
