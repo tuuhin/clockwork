@@ -37,6 +37,7 @@ class AlarmsModel extends HiveObject {
 
   set setId(int id) => this.id = id;
   set setIsActive(bool active) => isActive = active;
+  set setAt(DateTime datetime) => at = datetime;
 
   @override
   String toString() => '$id. Alarm at ${at.toIso8601String()}';

@@ -8,3 +8,5 @@ export './clock/small_clock_painter.dart';
 export './clock/timezones_clocks.dart';
 export './alarm/alarm_card.dart';
 export './alarm/alarms_list.dart';
+export './add_alarms/label_picker.dart';
+export './add_alarms/repeat_mode_picker.dart';

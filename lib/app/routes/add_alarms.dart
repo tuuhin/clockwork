@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:provider/provider.dart';
+import 'package:stopwatch/app/widgets/app_widgets.dart';
 import 'package:stopwatch/context/alarm_context.dart';
 import 'package:stopwatch/domain/enums/repeat_enum.dart';
 import 'package:stopwatch/domain/models/models.dart';
@@ -22,12 +24,21 @@ class _AddAlarmState extends State<AddAlarm> {
 
   DateTime at = DateTime.now().add(const Duration(minutes: 1));
 
+  String _relative = 'now';
+
   void _onTimeChange(DateTime time) {
-    at = time.subtract(Duration(seconds: time.second));
+    at = time.subtract(Duration(seconds: time.second, days: 5));
+
+    setState(() => _relative =
+        RelativeDateFormat(Localizations.localeOf(context))
+            .format(RelativeDateTime(dateTime: DateTime.now(), other: time)));
   }
 
   void _addAlarm() {
-    if (at.hour < DateTime.now().hour) {
+    if (DateTime.now().hour > at.hour) {
+      at = at.add(const Duration(days: 1));
+    } else if (DateTime.now().hour == at.hour &&
+        DateTime.now().minute >= at.minute) {
       at = at.add(const Duration(days: 1));
     }
     AlarmsModel _alarm = AlarmsModel(
@@ -70,67 +81,17 @@ class _AddAlarmState extends State<AddAlarm> {
   }
 
   void _showRepeatBottomSheet() => showModalBottomSheet(
-      context: context,
-      builder: (context) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  onTap: () => selectRepeatMode(RepeatEnum.once),
-                  title: Text('Once',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1!
-                          .copyWith(fontWeight: FontWeight.w600)),
-                ),
-                ListTile(
-                  onTap: () => selectRepeatMode(RepeatEnum.daily),
-                  title: Text('Daily',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1!
-                          .copyWith(fontWeight: FontWeight.w600)),
-                ),
-              ],
-            ),
-          ));
-
-  void _showLabelBottonSheet() {
-    final Size _size = MediaQuery.of(context).size;
-    showModalBottomSheet(
         context: context,
-        isScrollControlled: true,
-        builder: (context) => Padding(
-              padding: MediaQuery.of(context).viewInsets,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Label',
-                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                          fontWeight: FontWeight.w600, wordSpacing: 1.2),
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      cursorColor: Colors.black,
-                      keyboardType: TextInputType.name,
-                      keyboardAppearance: Brightness.light,
-                      controller: _labelController,
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            fixedSize: Size(_size.width, 50)),
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Add'))
-                  ],
-                ),
-              ),
-            ));
-  }
+        builder: (context) => RepeatModePicker(
+          onDaily: () => selectRepeatMode(RepeatEnum.daily),
+          onOnce: () => selectRepeatMode(RepeatEnum.once),
+        ),
+      );
+
+  void _showLabelBottonSheet() => showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => LabelPicker(labelController: _labelController));
 
   @override
   void initState() {
@@ -154,11 +115,16 @@ class _AddAlarmState extends State<AddAlarm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Alarm',
-            style: Theme.of(context)
-                .textTheme
-                .headline6!
-                .copyWith(fontWeight: FontWeight.bold)),
+        title: Column(
+          children: [
+            Text('Add Alarm',
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1!
+                    .copyWith(fontWeight: FontWeight.bold)),
+            Text(_relative)
+          ],
+        ),
         leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close, size: 30)),
