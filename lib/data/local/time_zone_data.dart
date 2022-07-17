@@ -1,40 +1,41 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:stopwatch/domain/models/models.dart';
+import '../../domain/models/models.dart';
 
 class TimeZoneData {
-  static Box<TimeZoneModel>? _box;
-  static Box<DetailedTimeZoneModel>? _details;
+  static Box<TimeZoneModel>? box;
+  static Box<DetailedTimeZoneModel>? details;
 
   static Future<void> init() async {
-    _box = await Hive.openBox<TimeZoneModel>('time_zones');
-    _details = await Hive.openBox<DetailedTimeZoneModel>('detailed_time_zones');
+    box = await Hive.openBox<TimeZoneModel>('time_zones');
+    details = await Hive.openBox<DetailedTimeZoneModel>('detailed_time_zones');
   }
 
-  void addZone(TimeZoneModel timeZone) async => await _box!.add(timeZone);
+  Future<void> addZone(TimeZoneModel timeZone) async => box!.add(timeZone);
 
-  void addDetailedZone(DetailedTimeZoneModel timeZone) async =>
-      await _details!.add(timeZone);
+  Future<void> addDetailedZone(DetailedTimeZoneModel timeZone) async =>
+      details!.add(timeZone);
 
-  List<TimeZoneModel> getAllZones() => _box!.values.toList();
+  List<TimeZoneModel> getAllZones() => box!.values.toList();
 
   List<DetailedTimeZoneModel> getAllDetailedZones() =>
-      _details!.values.toList().reversed.toList();
+      details!.values.toList().reversed.toList();
 
-  bool checkIfDetailedModelExists(TimeZoneModel zone) => _details!.values
+  bool checkIfDetailedModelExists(TimeZoneModel zone) => details!.values
       .where((DetailedTimeZoneModel element) =>
           element.location == zone.location ||
           element.location == zone.region && element.area == element.area)
       .isNotEmpty;
 
-  Future<void> clearDetailedModels() async => await _details!.clear();
+  Future<void> clearDetailedModels() async => details!.clear();
 
   Future<void> removeIndividualModel(DetailedTimeZoneModel zone) async {
-    for (var key in _details!.keys) {
-      if (_details!.get(key) == zone) {
-        await _details!.delete(key);
+    for (final dynamic key in details!.keys) {
+      if (details!.get(key) == zone) {
+        await details!.delete(key);
       }
     }
   }
 
-  int getIndex(zone) => _details!.values.toList().indexOf(zone);
+  int getIndex(DetailedTimeZoneModel zone) =>
+      details!.values.toList().indexOf(zone);
 }

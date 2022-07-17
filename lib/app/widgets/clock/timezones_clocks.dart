@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/domain/models/models.dart';
+
+import '../../../context/context.dart';
+import '../../../domain/models/models.dart';
+import '../app_widgets.dart';
 
 class TimeZonesClock extends StatefulWidget {
   const TimeZonesClock({Key? key}) : super(key: key);
@@ -20,15 +21,15 @@ class _TimeZonesClockState extends State<TimeZonesClock> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Future future = Future(() {});
-      for (DetailedTimeZoneModel entry in _zones) {
-        future = future
-            .then((_) => Future.delayed(const Duration(milliseconds: 50), () {
-                  // _zones.add(entry);
-                  _timeZoneContext.zonesListKey.currentState!
-                      .insertItem(_zones.indexOf(entry));
-                }));
+    WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
+      Future<dynamic> future = Future<dynamic>(() {});
+      for (final DetailedTimeZoneModel entry in _zones) {
+        future = future.then((_) =>
+            Future<dynamic>.delayed(const Duration(milliseconds: 50), () {
+              // _zones.add(entry);
+              _timeZoneContext.zonesListKey.currentState!
+                  .insertItem(_zones.indexOf(entry));
+            }));
       }
     });
   }
@@ -43,7 +44,7 @@ class _TimeZonesClockState extends State<TimeZonesClock> {
 
   final Tween<Offset> _offset = Tween<Offset>(
     begin: const Offset(0, -1),
-    end: const Offset(0, 0),
+    end: Offset.zero,
   );
 
   final Tween<double> _opacity = Tween<double>(
@@ -56,7 +57,8 @@ class _TimeZonesClockState extends State<TimeZonesClock> {
     return AnimatedList(
         physics: const BouncingScrollPhysics(),
         key: _timeZoneContext.zonesListKey,
-        itemBuilder: (context, index, animation) {
+        itemBuilder:
+            (BuildContext context, int index, Animation<double> animation) {
           return FadeTransition(
             opacity: animation.drive(_opacity),
             child: SlideTransition(

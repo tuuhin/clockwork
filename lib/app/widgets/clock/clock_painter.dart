@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' show radians;
 
 class ClockMainPainter extends CustomPainter {
-  DateTime current;
-
   ClockMainPainter({
     required this.current,
   });
+  DateTime current;
   @override
   void paint(Canvas canvas, Size size) {
     /// [SECONDS]

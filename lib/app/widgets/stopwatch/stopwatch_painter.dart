@@ -6,7 +6,7 @@ import 'package:vector_math/vector_math.dart' show radians;
 class StopWatchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    Paint _paint = Paint()
+    final Paint paint = Paint()
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
@@ -18,7 +18,7 @@ class StopWatchPainter extends CustomPainter {
               size.height * .5 - size.height * 0.46 * sin(radians(i))),
           Offset(size.width * .5 * (1 + cos(radians(i))),
               size.height * .5 * (1 - sin(radians(i)))),
-          _paint);
+          paint);
     }
   }
 

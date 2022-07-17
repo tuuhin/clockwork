@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/context/alarm_context.dart';
-import 'package:stopwatch/domain/enums/repeat_enum.dart';
-import 'package:stopwatch/domain/models/models.dart';
+
+import '../../context/alarm_context.dart';
+import '../../domain/enums/repeat_enum.dart';
+import '../../domain/models/models.dart';
+import '../widgets/app_widgets.dart';
 
 class AddAlarm extends StatefulWidget {
   const AddAlarm({Key? key}) : super(key: key);
@@ -41,26 +42,26 @@ class _AddAlarmState extends State<AddAlarm> {
         DateTime.now().minute >= at.minute) {
       at = at.add(const Duration(days: 1));
     }
-    AlarmsModel _alarm = AlarmsModel(
+    final AlarmsModel alarm = AlarmsModel(
       at: at,
       repeat: _repeat,
       vibrate: _isVibrate,
       label: _labelController.text.isNotEmpty ? _labelController.text : null,
       deleteAfterDone: _isDelete,
     );
-    bool _itExists = _alarmContext.isAlarmAlreadyExists(_alarm);
-    print(_itExists);
-    if (!_itExists) {
-      _alarmContext.addAlarms(_alarm);
+    final bool itExists = _alarmContext.isAlarmAlreadyExists(alarm);
+
+    if (!itExists) {
+      _alarmContext.addAlarms(alarm);
       return Navigator.of(context).pop();
     }
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: const Text('Failed to create an alarm'),
         content: const Text(
             'There is a alarm already assigned to this  particular time'),
-        actions: [
+        actions: <Widget>[
           ElevatedButton(
             onPressed: () => Navigator.of(context)
               ..pop()
@@ -82,7 +83,7 @@ class _AddAlarmState extends State<AddAlarm> {
 
   void _showRepeatBottomSheet() => showModalBottomSheet(
         context: context,
-        builder: (context) => RepeatModePicker(
+        builder: (BuildContext context) => RepeatModePicker(
           onDaily: () => selectRepeatMode(RepeatEnum.daily),
           onOnce: () => selectRepeatMode(RepeatEnum.once),
         ),
@@ -91,7 +92,8 @@ class _AddAlarmState extends State<AddAlarm> {
   void _showLabelBottonSheet() => showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => LabelPicker(labelController: _labelController));
+      builder: (BuildContext context) =>
+          LabelPicker(labelController: _labelController));
 
   @override
   void initState() {
@@ -116,7 +118,7 @@ class _AddAlarmState extends State<AddAlarm> {
     return Scaffold(
       appBar: AppBar(
         title: Column(
-          children: [
+          children: <Widget>[
             Text('Add Alarm',
                 style: Theme.of(context)
                     .textTheme
@@ -128,7 +130,7 @@ class _AddAlarmState extends State<AddAlarm> {
         leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close, size: 30)),
-        actions: [
+        actions: <Widget>[
           IconButton(
               onPressed: _addAlarm, icon: const Icon(Icons.done, size: 30)),
         ],
@@ -136,11 +138,11 @@ class _AddAlarmState extends State<AddAlarm> {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         child: Column(
-          children: [
+          children: <Widget>[
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 Text(
                   'Hour',
                   style: Theme.of(context)
@@ -161,7 +163,6 @@ class _AddAlarmState extends State<AddAlarm> {
             TimePickerSpinner(
               time: at,
               alignment: Alignment.center,
-              is24HourMode: true,
               onTimeChange: _onTimeChange,
               normalTextStyle: Theme.of(context)
                   .textTheme
@@ -177,7 +178,7 @@ class _AddAlarmState extends State<AddAlarm> {
             const SizedBox(height: 10),
             Expanded(
               child: ListView(
-                children: [
+                children: <Widget>[
                   ListTile(
                     onTap: _showRepeatBottomSheet,
                     title: Text(
@@ -187,7 +188,7 @@ class _AddAlarmState extends State<AddAlarm> {
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
+                      children: <Widget>[
                         Text(_repeat == RepeatEnum.once ? 'Once' : 'Daily'),
                         const Icon(Icons.chevron_right)
                       ],
@@ -195,7 +196,7 @@ class _AddAlarmState extends State<AddAlarm> {
                   ),
                   SwitchListTile(
                       value: _isVibrate,
-                      onChanged: (t) =>
+                      onChanged: (bool t) =>
                           setState(() => _isVibrate = !_isVibrate),
                       title: Text(
                         'Vibrate when alarm sounds',
@@ -205,7 +206,7 @@ class _AddAlarmState extends State<AddAlarm> {
                   if (_repeat == RepeatEnum.once)
                     SwitchListTile(
                         value: _isDelete,
-                        onChanged: (t) =>
+                        onChanged: (bool t) =>
                             setState(() => _isDelete = !_isDelete),
                         title: Text(
                           'Delete after it goes off',

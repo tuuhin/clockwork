@@ -1,37 +1,37 @@
 String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
 String stopWatchFormat(Duration time) {
-  String _timeMinutes = _twoDigits(time.inMinutes.remainder(60));
-  String _timeSeconds = _twoDigits(time.inSeconds.remainder(60));
+  final String timeMinutes = _twoDigits(time.inMinutes.remainder(60));
+  final String timeSeconds = _twoDigits(time.inSeconds.remainder(60));
   if (time.inHours > 0) {
-    String _timeHour = _twoDigits(time.inHours.remainder(60));
+    final String timeHour = _twoDigits(time.inHours.remainder(60));
 
-    return '$_timeHour:$_timeMinutes:$_timeSeconds';
+    return '$timeHour:$timeMinutes:$timeSeconds';
   }
 
-  return '$_timeMinutes:$_timeSeconds';
+  return '$timeMinutes:$timeSeconds';
 }
 
 String alarmFormat(DateTime dateTime) {
-  String _timeHour = _twoDigits(dateTime.hour);
-  String _timeMinutes = _twoDigits(dateTime.minute);
-  return '$_timeHour : $_timeMinutes';
+  final String timeHour = _twoDigits(dateTime.hour);
+  final String timeMinutes = _twoDigits(dateTime.minute);
+  return '$timeHour : $timeMinutes';
 }
 
 String clockFormat(DateTime dateTime) {
-  String _timeHour = _twoDigits(dateTime.hour);
-  String _timeMinutes = _twoDigits(dateTime.minute);
-  String _timeSeconds = _twoDigits(dateTime.second);
-  return '$_timeHour:$_timeMinutes:$_timeSeconds';
+  final String timeHour = _twoDigits(dateTime.hour);
+  final String timeMinutes = _twoDigits(dateTime.minute);
+  final String timeSeconds = _twoDigits(dateTime.second);
+  return '$timeHour:$timeMinutes:$timeSeconds';
 }
 
 String getTimeFromOffset(int offset) {
-  DateTime time = DateTime.now()
+  final DateTime time = DateTime.now()
       .subtract(const Duration(seconds: 19800))
       .add(Duration(seconds: offset));
   return '${_twoDigits(time.hour)}:${_twoDigits(time.minute)}';
 }
 
-DateTime getime(offset) => DateTime.now()
+DateTime getime(int offset) => DateTime.now()
     .subtract(const Duration(seconds: 19800))
     .add(Duration(seconds: offset));

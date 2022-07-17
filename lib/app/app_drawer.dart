@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/tabs/alarm_tab.dart';
-import 'package:stopwatch/app/tabs/clocks_tab.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/utils/images.dart';
+
+import '../context/context.dart';
+import '../utils/images.dart';
+import 'tabs/alarm_tab.dart';
+import 'tabs/clocks_tab.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -24,12 +25,12 @@ class _AppDrawerState extends State<AppDrawer> {
     _timeZoneContext = Provider.of<TimeZoneContext>(context);
   }
 
-  void _showDialog(String text) async {
+  Future<void> _showDialog(String text) async {
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: Text(text, style: Theme.of(context).textTheme.subtitle1),
-        actions: [
+        actions: <Widget>[
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Ok'),
@@ -62,10 +63,11 @@ class _AppDrawerState extends State<AppDrawer> {
     return Drawer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FutureBuilder(
+        children: <Widget>[
+          FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
-            builder: (context, AsyncSnapshot<PackageInfo> snapshot) {
+            builder:
+                (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
               if (snapshot.hasData) {
                 return ListTile(
                   dense: true,

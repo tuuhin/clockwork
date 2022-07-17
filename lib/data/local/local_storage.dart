@@ -1,12 +1,13 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:stopwatch/data/data.dart';
-import 'package:stopwatch/data/local/time_zone_data.dart';
-import 'package:stopwatch/domain/enums/repeat_enum.dart';
-import 'package:stopwatch/domain/models/models.dart';
 
+import '../../domain/enums/repeat_enum.dart';
+import '../../domain/models/models.dart';
+import '../data.dart';
+import 'time_zone_data.dart';
+
+// ignore: avoid_classes_with_only_static_members
 class LocalStorage {
-  static Future init() async {
-    /// initilizing [Hive]
+  static Future<dynamic> init() async {
     await Hive.initFlutter();
     Hive
       ..registerAdapter(AlarmsModelAdapter())

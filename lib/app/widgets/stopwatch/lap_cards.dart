@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/utils/time_formatter.dart';
-import 'package:stopwatch/utils/utils.dart';
+import '../../../context/context.dart';
+import '../../../utils/time_formatter.dart';
+import '../../../utils/utils.dart';
 
 class StopWatchLapsCard extends StatefulWidget {
-  final int lapNumber;
-  final Duration time;
   const StopWatchLapsCard({
     Key? key,
     required this.lapNumber,
     required this.time,
   }) : super(key: key);
+  final int lapNumber;
+  final Duration time;
 
   @override
   State<StopWatchLapsCard> createState() => _StopWatchLapsCardState();
@@ -32,11 +32,11 @@ class _StopWatchLapsCardState extends State<StopWatchLapsCard> {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: <Widget>[
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Text('LAP ${widget.lapNumber + 1} ',
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.w600, letterSpacing: 1.2)),
@@ -54,8 +54,3 @@ class _StopWatchLapsCardState extends State<StopWatchLapsCard> {
     );
   }
 }
-
-// _animationController.reverse();
-//       // await Future.delayed(
-//       //     _animationController.duration ?? const Duration());
-//       // _stopWatchContext.removeLap(widget.lapNumber);

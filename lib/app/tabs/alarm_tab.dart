@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/routes/routes.dart';
-import 'package:stopwatch/app/widgets/alarm/alarms_list.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/utils/utils.dart';
+
+import '../../context/context.dart';
+import '../../utils/utils.dart';
+import '../routes/routes.dart';
+import '../widgets/alarm/alarms_list.dart';
 
 class AlarmTab extends StatefulWidget {
   const AlarmTab({Key? key}) : super(key: key);
@@ -21,11 +22,11 @@ class _AlarmTabState extends State<AlarmTab> {
     _alarmContext = Provider.of<AlarmContext>(context);
   }
 
-  void addAlarm() async => await Navigator.of(context).push(alarmRoute());
+  Future<void> addAlarm() async => Navigator.of(context).push(alarmRoute());
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
         body: AnimatedContainer(
@@ -33,10 +34,11 @@ class _AlarmTabState extends State<AlarmTab> {
           child: _alarmContext.alarms.isNotEmpty
               ? const AlarmsList()
               : SizedBox.expand(
-                  child: TweenAnimationBuilder(
+                  child: TweenAnimationBuilder<double>(
                     duration: const Duration(milliseconds: 400),
                     tween: Tween<double>(begin: 0, end: 1),
-                    builder: (context, double animation, child) {
+                    builder: (BuildContext context, double animation,
+                        Widget? child) {
                       return AnimatedOpacity(
                         opacity: animation,
                         duration: const Duration(milliseconds: 400),
@@ -45,10 +47,9 @@ class _AlarmTabState extends State<AlarmTab> {
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
+                      children: <Widget>[
                         SizedBox.square(
-                            dimension: _size.width * .4, child: alarmImage),
+                            dimension: size.width * .4, child: alarmImage),
                         const SizedBox(height: 20),
                         Text('No alarms'.toUpperCase(),
                             style: Theme.of(context).textTheme.subtitle1)
@@ -73,18 +74,19 @@ class _AlarmTabState extends State<AlarmTab> {
   }
 }
 
-Route alarmRoute() {
-  final Tween<Offset> _offset =
-      Tween<Offset>(begin: const Offset(1, 0), end: const Offset(0, 0));
-  final Tween<double> _opacity = Tween<double>(begin: 0.0, end: 1.0);
-  return PageRouteBuilder(
+Route<dynamic> alarmRoute() {
+  final Tween<Offset> offset =
+      Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero);
+  final Tween<double> opacity = Tween<double>(begin: 0.0, end: 1.0);
+  return PageRouteBuilder<dynamic>(
     transitionDuration: const Duration(milliseconds: 500),
     reverseTransitionDuration: const Duration(milliseconds: 500),
-    pageBuilder: (context, animation, secondaryAnimation) {
+    pageBuilder: (BuildContext context, Animation<double> animation,
+        Animation<double> secondaryAnimation) {
       return FadeTransition(
-        opacity: animation.drive(_opacity),
+        opacity: animation.drive(opacity),
         child: SlideTransition(
-          position: animation.drive(_offset),
+          position: animation.drive(offset),
           child: const AddAlarm(),
         ),
       );

@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:stopwatch/domain/models/alarms_model.dart';
+import '../../domain/models/alarms_model.dart';
 
 class AlarmData {
   static Box<AlarmsModel>? _alarmsBox;
@@ -11,26 +11,25 @@ class AlarmData {
   static Box<AlarmsModel>? get alarmBox => _alarmsBox;
 
   Future<void> addAlarm(AlarmsModel alarm) async {
-    int _id = await _alarmsBox!.add(alarm);
-    alarm.setId = _id;
-
+    final int id = await _alarmsBox!.add(alarm);
+    alarm.setId = id;
     await alarm.save();
   }
 
   List<AlarmsModel> getAlarms() => _alarmsBox!.values.toList();
 
   void removeAlarm(AlarmsModel alarm) {
-    int id = alarm.id;
-    AlarmsModel? _oldAlarm = _alarmsBox!.get(id);
-    if (_oldAlarm != null) {
+    final int id = alarm.id;
+    final AlarmsModel? oldAlarm = _alarmsBox!.get(id);
+    if (oldAlarm != null) {
       _alarmsBox!.delete(id);
     }
   }
 
-  int getIndex(zone) => _alarmsBox!.values.toList().indexOf(zone);
+  int getIndex(AlarmsModel zone) => _alarmsBox!.values.toList().indexOf(zone);
 
   bool isAlarmAlreadyExists(AlarmsModel model) => _alarmsBox!.values
       .toList()
-      .where((element) => element.at == model.at)
+      .where((AlarmsModel element) => element.at == model.at)
       .isNotEmpty;
 }

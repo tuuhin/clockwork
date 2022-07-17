@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/routes/clock_locations.dart';
-import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/utils/time_formatter.dart' show clockFormat;
+
+import '../../context/context.dart';
+import '../../utils/time_formatter.dart' show clockFormat;
+import '../routes/clock_locations.dart';
+import '../widgets/app_widgets.dart';
 
 class ClocksTab extends StatefulWidget {
   const ClocksTab({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _ClocksTabState extends State<ClocksTab> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(children: [
+        child: Column(children: <Widget>[
           const AnalogClock(),
           Text('Current:  ${_clck.day}/${_clck.month}/${_clck.year} '),
           Text(
@@ -55,23 +56,22 @@ class _ClocksTabState extends State<ClocksTab> {
   }
 }
 
-Route clockLocations() => PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 300),
-      reverseTransitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: ((context, animation, secondaryAnimation) {
-        Animation<double> _opacity =
-            Tween<double>(begin: 0.0, end: 1.0).animate(animation);
-        Animation<Offset> _offset = Tween<Offset>(
-                begin: const Offset(1, 0), end: const Offset(0, 0))
-            .animate(
-                CurvedAnimation(parent: animation, curve: Curves.decelerate));
-
-        return SlideTransition(
-          position: _offset,
-          child: FadeTransition(
-            opacity: _opacity,
-            child: const ClockLocations(),
-          ),
-        );
-      }),
-    );
+Route<dynamic> clockLocations() {
+  final Tween<Offset> offset =
+      Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero);
+  final Tween<double> opacity = Tween<double>(begin: 0.0, end: 1.0);
+  return PageRouteBuilder<dynamic>(
+    transitionDuration: const Duration(milliseconds: 500),
+    reverseTransitionDuration: const Duration(milliseconds: 500),
+    pageBuilder: (BuildContext context, Animation<double> animation,
+        Animation<double> secondaryAnimation) {
+      return FadeTransition(
+        opacity: animation.drive(opacity),
+        child: SlideTransition(
+          position: animation.drive(offset),
+          child: const ClockLocations(),
+        ),
+      );
+    },
+  );
+}

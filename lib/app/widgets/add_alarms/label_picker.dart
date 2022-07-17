@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class LabelPicker extends StatelessWidget {
-  final TextEditingController labelController;
   const LabelPicker({Key? key, required this.labelController})
       : super(key: key);
+  final TextEditingController labelController;
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             Text(
               'Label',
               style: Theme.of(context)
@@ -32,7 +32,7 @@ class LabelPicker extends StatelessWidget {
             const SizedBox(height: 10),
             ElevatedButton(
                 style:
-                    ElevatedButton.styleFrom(fixedSize: Size(_size.width, 50)),
+                    ElevatedButton.styleFrom(fixedSize: Size(size.width, 50)),
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('Add'))
           ],

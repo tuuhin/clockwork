@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/app/widgets/stopwatch/stopwatch_clock.dart';
-import 'package:stopwatch/context/context.dart';
+
+import '../../context/context.dart';
+import '../widgets/app_widgets.dart';
+import '../widgets/stopwatch/stopwatch_clock.dart';
 
 class StopwatchTab extends StatefulWidget {
   const StopwatchTab({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class _StopwatchTabState extends State<StopwatchTab>
     if (_stopWatchContext.isStopWatchRunning) {
       _animationController.forward();
 
-      _animationController.addStatusListener((status) {
+      _animationController.addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
           _animationController.repeat();
         }
@@ -68,10 +69,10 @@ class _StopwatchTabState extends State<StopwatchTab>
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Column(
-        children: [
+        children: <Widget>[
           StopWatchClock(
             controller: _animationController,
           ),
@@ -83,10 +84,10 @@ class _StopwatchTabState extends State<StopwatchTab>
           padding: const EdgeInsets.all(8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
+            children: <Widget>[
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size(_size.width * .45, 50),
+                    fixedSize: Size(size.width * .45, 50),
                   ),
                   onPressed: _onStartTap,
                   child: Text(
@@ -98,7 +99,7 @@ class _StopwatchTabState extends State<StopwatchTab>
                   )),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  fixedSize: Size(_size.width * .45, 50),
+                  fixedSize: Size(size.width * .45, 50),
                 ),
                 onPressed:
                     _stopWatchContext.isStopWatchRunning ? _onReset : null,

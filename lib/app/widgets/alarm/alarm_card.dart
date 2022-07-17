@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/domain/enums/enums.dart';
-import 'package:stopwatch/domain/models/models.dart';
-import 'package:stopwatch/utils/time_formatter.dart';
+import '../../../context/context.dart';
+import '../../../domain/enums/enums.dart';
+import '../../../domain/models/models.dart';
+import '../../../utils/time_formatter.dart';
 
 class AlarmCard extends StatefulWidget {
-  final AlarmsModel model;
   const AlarmCard({
     Key? key,
     required this.model,
   }) : super(key: key);
+  final AlarmsModel model;
 
   @override
   State<AlarmCard> createState() => _AlarmCardState();
@@ -32,15 +32,13 @@ class _AlarmCardState extends State<AlarmCard> {
     return Dismissible(
       key: ObjectKey(widget.model),
       direction: DismissDirection.startToEnd,
-      confirmDismiss: (direction) async {
-        return true;
-      },
-      onDismissed: (direction) => _alarmContext.removeAlarm(widget.model),
+      confirmDismiss: (DismissDirection direction) async => true,
+      onDismissed: (DismissDirection direction) =>
+          _alarmContext.removeAlarm(widget.model),
       background: Card(
         color: Colors.black,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: const [
+          children: const <Widget>[
             SizedBox(width: 20),
             Icon(Icons.delete_outline, color: Colors.white),
           ],
@@ -57,7 +55,7 @@ class _AlarmCardState extends State<AlarmCard> {
                     .headline5!
                     .copyWith(fontWeight: FontWeight.w600),
                 children: widget.model.label != null
-                    ? [
+                    ? <InlineSpan>[
                         TextSpan(
                           text: '|',
                           style: Theme.of(context)
@@ -73,14 +71,14 @@ class _AlarmCardState extends State<AlarmCard> {
                               .copyWith(fontWeight: FontWeight.w400),
                         )
                       ]
-                    : [])),
+                    : <InlineSpan>[])),
             subtitle: !widget.model.isActive
                 ? Text(
                     widget.model.repeat == RepeatEnum.daily ? 'Daily' : 'Once',
                   )
                 : AnimatedRelativeDateTimeBuilder(
                     date: widget.model.at,
-                    builder: (time, str) {
+                    builder: (RelativeDateTime time, String str) {
                       return Text(str);
                     }),
             trailing: Switch(

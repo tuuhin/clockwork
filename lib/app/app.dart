@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stopwatch/app/app_drawer.dart';
-import 'package:stopwatch/app/tabs/tabs.dart';
+import 'app_drawer.dart';
+import 'tabs/tabs.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -12,13 +12,13 @@ class App extends StatefulWidget {
 class _AppState extends State<App> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final List<Widget> _tabs = const [
+  final List<Widget> _tabs = const <Widget>[
     AlarmTab(),
     StopwatchTab(),
     ClocksTab(),
   ];
 
-  final List<String> _tabsName = const ['Alarm', 'Stopwatch', 'Clock'];
+  final List<String> _tabsName = const <String>['Alarm', 'Stopwatch', 'Clock'];
   int _currentIndex = 0;
 
   @override
@@ -62,9 +62,9 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          actions: [
+          actions: <Widget>[
             Builder(
-              builder: (context) => IconButton(
+              builder: (BuildContext context) => IconButton(
                 icon: const Icon(Icons.menu),
                 onPressed: () => Scaffold.of(context).openDrawer(),
               ),
@@ -76,36 +76,37 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
               onTap: _onTap,
               tabs: _tabsName
                   .asMap()
-                  .map<int, Tab>((index, tabName) => MapEntry(
-                        index,
-                        Tab(
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: _currentIndex == index
-                                  ? const Color.fromARGB(220, 220, 220, 220)
-                                  : null,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Text(
-                                tabName,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .subtitle2!
-                                    .copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1,
-                                        color: _currentIndex == index
-                                            ? const Color.fromARGB(
-                                                255, 43, 43, 43)
-                                            : Colors.grey),
+                  .map<int, Tab>(
+                      (int index, String tabName) => MapEntry<int, Tab>(
+                            index,
+                            Tab(
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: _currentIndex == index
+                                      ? const Color.fromARGB(220, 220, 220, 220)
+                                      : null,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Text(
+                                    tabName,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle2!
+                                        .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 1,
+                                            color: _currentIndex == index
+                                                ? const Color.fromARGB(
+                                                    255, 43, 43, 43)
+                                                : Colors.grey),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ))
+                          ))
                   .values
                   .toList()),
         ),

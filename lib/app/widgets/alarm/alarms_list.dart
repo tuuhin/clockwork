@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/widgets/alarm/alarm_card.dart';
-import 'package:stopwatch/context/alarm_context.dart';
-import 'package:stopwatch/domain/models/alarms_model.dart';
+
+import '../../../context/alarm_context.dart';
+import '../../../domain/models/alarms_model.dart';
+import 'alarm_card.dart';
 
 class AlarmsList extends StatefulWidget {
   const AlarmsList({
@@ -19,18 +20,18 @@ class _AlarmsListState extends State<AlarmsList> {
   late List<AlarmsModel> _alarms;
   final Tween<Offset> _offset = Tween<Offset>(
     begin: const Offset(-1, 0),
-    end: const Offset(0, 0),
+    end: Offset.zero,
   );
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Future future = Future(() {});
+    WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
+      Future<dynamic> future = Future<dynamic>(() {});
 
-      for (AlarmsModel alarm in _alarms) {
+      for (final AlarmsModel alarm in _alarms) {
         future = future.then(
-          (value) => Future.delayed(
+          (dynamic value) => Future<dynamic>.delayed(
             const Duration(milliseconds: 90),
             () {
               _alarmContext.listKey.currentState!
@@ -54,7 +55,8 @@ class _AlarmsListState extends State<AlarmsList> {
     return AnimatedList(
       padding: const EdgeInsets.all(8.0),
       key: _alarmContext.listKey,
-      itemBuilder: (context, index, animation) {
+      itemBuilder:
+          (BuildContext context, int index, Animation<double> animation) {
         return SlideTransition(
           position: _offset.animate(
               CurvedAnimation(parent: animation, curve: Curves.easeInOut)),

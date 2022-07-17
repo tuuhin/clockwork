@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/data/api/worldtimeapi_client.dart';
-import 'package:stopwatch/data/local/time_zone_data.dart';
-import 'package:stopwatch/domain/models/models.dart';
+import '../app/widgets/app_widgets.dart';
+import '../data/api/worldtimeapi_client.dart';
+import '../data/local/time_zone_data.dart';
+import '../domain/models/models.dart';
 
 class TimeZoneContext extends ChangeNotifier {
-  static final WorldTimeApiClient _clt = WorldTimeApiClient();
-  static final TimeZoneData _data = TimeZoneData();
+  final WorldTimeApiClient _clt = WorldTimeApiClient();
+  final TimeZoneData _data = TimeZoneData();
   final Tween<Offset> _offset = Tween<Offset>(
     begin: const Offset(-1, 0),
-    end: const Offset(0, 0),
+    end: Offset.zero,
   );
   final GlobalKey<AnimatedListState> _globalKey =
       GlobalKey<AnimatedListState>();
@@ -17,17 +17,18 @@ class TimeZoneContext extends ChangeNotifier {
   GlobalKey<AnimatedListState> get zonesListKey => _globalKey;
 
   Future<List<TimeZoneModel?>> get zones async {
-    List<TimeZoneModel?> _timeZones = _data.getAllZones();
-    if (_timeZones.isEmpty) {
-      List<TimeZoneModel> _zones = await _clt.getZones();
-      if (_zones.isNotEmpty) {
-        for (var element in _zones) {
+    final List<TimeZoneModel?> timeZones = _data.getAllZones();
+    if (timeZones.isEmpty) {
+      final List<TimeZoneModel> zones = await _clt.getZones();
+      if (zones.isNotEmpty) {
+        // ignore: prefer_foreach
+        for (final TimeZoneModel element in zones) {
           _data.addZone(element);
         }
         return _data.getAllZones();
       }
     }
-    return _timeZones;
+    return timeZones;
   }
 
   List<DetailedTimeZoneModel> getAllDetailedModels() =>
@@ -36,12 +37,12 @@ class TimeZoneContext extends ChangeNotifier {
   bool checkIfDetailModelSelected(TimeZoneModel zone) =>
       _data.checkIfDetailedModelExists(zone);
 
-  Future getZoneDetails(TimeZoneModel zone) async {
-    bool _exits = _data.checkIfDetailedModelExists(zone);
-    if (!_exits) {
-      Map? _details = await _clt.getTimeZoneInfo(zone);
-      if (_details != null) {
-        int rawOffset = _details['raw_offset'];
+  Future<void> getZoneDetails(TimeZoneModel zone) async {
+    final bool exits = _data.checkIfDetailedModelExists(zone);
+    if (!exits) {
+      final Map<String, dynamic>? details = await _clt.getTimeZoneInfo(zone);
+      if (details != null) {
+        final int rawOffset = details['raw_offset'] as int;
 
         _data.addDetailedZone(DetailedTimeZoneModel(
             location:
@@ -58,25 +59,27 @@ class TimeZoneContext extends ChangeNotifier {
   }
 
   void removeIndividualModel(DetailedTimeZoneModel zone) {
-    int index = _data.getIndex(zone);
+    final int index = _data.getIndex(zone);
     if (_globalKey.currentState != null) {
-      _globalKey.currentState!
-          .removeItem(index, (context, animation) => const SizedBox());
+      _globalKey.currentState!.removeItem(
+          index,
+          (BuildContext context, Animation<double> animation) =>
+              const SizedBox());
     }
     _data.removeIndividualModel(zone);
     notifyListeners();
   }
 
   void removeDetailedModels() {
-    List<DetailedTimeZoneModel> _allDetailModels = getAllDetailedModels();
+    final List<DetailedTimeZoneModel> allDetailModels = getAllDetailedModels();
 
-    Future future = Future(() {});
-    for (var entry in _allDetailModels) {
-      future = future
-          .then((_) => Future.delayed(const Duration(milliseconds: 50), () {
+    Future<dynamic> future = Future<dynamic>(() {});
+    for (final DetailedTimeZoneModel entry in allDetailModels) {
+      future = future.then(
+          (_) => Future<dynamic>.delayed(const Duration(milliseconds: 50), () {
                 _globalKey.currentState!.removeItem(
                   0,
-                  (context, animation) {
+                  (BuildContext context, Animation<double> animation) {
                     return SlideTransition(
                       position: animation.drive(_offset),
                       child: ClockCard(zone: entry),

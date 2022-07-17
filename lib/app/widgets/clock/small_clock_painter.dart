@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math.dart' show radians;
 
 class SmallClockPainter extends CustomPainter {
+  SmallClockPainter({required this.current, this.dialColor});
   DateTime current;
   Color? dialColor;
-  SmallClockPainter({required this.current, this.dialColor});
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawLine(

@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/app.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/data/data.dart';
-import 'package:stopwatch/domain/models/models.dart';
-import 'package:stopwatch/service/services.dart';
-import 'package:stopwatch/utils/pallet.dart';
+import 'package:provider/single_child_widget.dart';
+
+import 'app/app.dart';
+import 'context/context.dart';
+import 'data/data.dart';
+import 'domain/models/models.dart';
+import 'service/services.dart';
+import 'utils/pallet.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorage.init();
   await AlarmService.init();
-  await NotificationService.init();
+  NotificationService.init();
 
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
 
   // SystemChrome.setSystemUIOverlayStyle(
   //     const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
@@ -29,32 +33,32 @@ class ProviderWrappers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final StopWatchContext _stopWatchContext = StopWatchContext();
-    final ClocksContext _clockContext = ClocksContext();
-    final TimeZoneContext _timezoneContext = TimeZoneContext();
-    final AlarmContext _alarmContext = AlarmContext();
+    final StopWatchContext stopWatchContext = StopWatchContext();
+    final ClocksContext clockContext = ClocksContext();
+    final TimeZoneContext timezoneContext = TimeZoneContext();
+    final AlarmContext alarmContext = AlarmContext();
     return MultiProvider(
-      providers: [
+      providers: <SingleChildWidget>[
         ChangeNotifierProvider<StopWatchContext>(
-          create: (context) => _stopWatchContext,
+          create: (BuildContext context) => stopWatchContext,
         ),
         StreamProvider<CurrentStopWatchTime>(
-          create: (context) => _stopWatchContext.getStopWatch,
-          initialData: const Duration(),
+          create: (BuildContext context) => stopWatchContext.getStopWatch,
+          initialData: Duration.zero,
         ),
         StreamProvider<ClockTime>(
-          create: (context) => _clockContext.getWatch,
+          create: (BuildContext context) => clockContext.getWatch,
           initialData: ClockTime.now(),
         ),
         FutureProvider<List<TimeZoneModel?>>(
-          create: (context) => _timezoneContext.zones,
-          initialData: const [],
+          create: (BuildContext context) => timezoneContext.zones,
+          initialData: const <TimeZoneModel?>[],
         ),
         ChangeNotifierProvider<TimeZoneContext>(
-          create: (context) => _timezoneContext,
+          create: (BuildContext context) => timezoneContext,
         ),
         ChangeNotifierProvider<AlarmContext>(
-          create: (context) => _alarmContext,
+          create: (BuildContext context) => alarmContext,
         )
       ],
       child: const MyApp(),
@@ -69,7 +73,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'ClockWork',
         debugShowCheckedModeBanner: false,
-        theme: Pallet.lightTheme,
+        theme: lightTheme,
         home: const App());
   }
 }

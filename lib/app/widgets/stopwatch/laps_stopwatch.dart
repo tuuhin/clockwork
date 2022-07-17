@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/widgets/stopwatch/lap_cards.dart';
-import 'package:stopwatch/context/context.dart';
+
+import '../../../context/context.dart';
+import 'lap_cards.dart';
 
 class StopWatchLaps extends StatefulWidget {
   const StopWatchLaps({Key? key}) : super(key: key);
@@ -12,18 +13,17 @@ class StopWatchLaps extends StatefulWidget {
 
 class _StopWatchLapsState extends State<StopWatchLaps> {
   late StopWatchContext _stopWatchContext;
-  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Future future = Future(() {});
 
-      for (Duration lap in _stopWatchContext.laps) {
+    WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
+      Future<dynamic> future = Future<dynamic>(() {});
+
+      for (final Duration lap in _stopWatchContext.laps) {
         future = future.then(
-          (value) => Future.delayed(
+          (dynamic value) => Future<dynamic>.delayed(
             const Duration(milliseconds: 90),
             () {
               _stopWatchContext.key.currentState!
@@ -42,7 +42,7 @@ class _StopWatchLapsState extends State<StopWatchLaps> {
   }
 
   final Tween<Offset> _offset =
-      Tween<Offset>(begin: const Offset(0, -1), end: const Offset(0, 0));
+      Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero);
   final Tween<double> _opacity = Tween<double>(begin: 0, end: 1);
   @override
   Widget build(BuildContext context) {
@@ -50,10 +50,10 @@ class _StopWatchLapsState extends State<StopWatchLaps> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: AnimatedList(
-            controller: _scrollController,
             key: _stopWatchContext.key,
             physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index, animation) {
+            itemBuilder:
+                (BuildContext context, int index, Animation<double> animation) {
               return FadeTransition(
                 opacity: animation.drive(_opacity),
                 child: SlideTransition(

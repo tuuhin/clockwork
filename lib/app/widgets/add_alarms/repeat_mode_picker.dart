@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 class RepeatModePicker extends StatelessWidget {
-  final void Function()? onOnce;
-  final void Function()? onDaily;
   const RepeatModePicker({Key? key, this.onDaily, this.onOnce})
       : super(key: key);
+  final void Function()? onOnce;
+  final void Function()? onDaily;
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             ListTile(
               onTap: onOnce,
               title: Text('Once',

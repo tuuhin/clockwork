@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/utils/utils.dart';
 import 'package:vector_math/vector_math.dart' show radians;
 
+import '../../../context/context.dart';
+import '../../../utils/utils.dart';
+import '../app_widgets.dart';
+
 class StopWatchClock extends StatefulWidget {
-  final AnimationController controller;
   const StopWatchClock({Key? key, required this.controller}) : super(key: key);
+  final AnimationController controller;
 
   @override
   State<StopWatchClock> createState() => _StopWatchClockState();
@@ -29,23 +30,23 @@ class _StopWatchClockState extends State<StopWatchClock>
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
-    final CurrentStopWatchTime _time =
+    final Size size = MediaQuery.of(context).size;
+    final CurrentStopWatchTime time =
         Provider.of<CurrentStopWatchTime>(context);
 
     return Container(
-      height: _size.height * 0.35,
+      height: size.height * 0.35,
       alignment: Alignment.center,
       child: Stack(
         alignment: Alignment.center,
-        children: [
+        children: <Widget>[
           SizedBox.square(
-            dimension: _size.width * .6,
+            dimension: size.width * .6,
             child: Container(
               decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
-                  boxShadow: [
+                  boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: Colors.grey,
                         offset: Offset(2, 2),
@@ -61,11 +62,11 @@ class _StopWatchClockState extends State<StopWatchClock>
           ),
           AnimatedBuilder(
               animation: widget.controller,
-              builder: (context, animation) {
+              builder: (BuildContext context, Widget? animation) {
                 return Transform.rotate(
                   angle: radians(_rotate.value),
                   child: SizedBox.square(
-                    dimension: _size.width * 0.56,
+                    dimension: size.width * 0.56,
                     child: CustomPaint(
                       painter: StopWatchPainter(),
                     ),
@@ -73,17 +74,14 @@ class _StopWatchClockState extends State<StopWatchClock>
                 );
               }),
           SizedBox.square(
-            dimension: _size.width * .45,
+            dimension: size.width * .45,
             child: Container(
                 decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    boxShadow: [
+                    boxShadow: <BoxShadow>[
                   BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0, 0),
-                      blurRadius: 1,
-                      spreadRadius: .1),
+                      color: Colors.grey, blurRadius: 1, spreadRadius: .1),
                   BoxShadow(
                       color: Colors.white,
                       offset: Offset(1, 1),
@@ -92,17 +90,14 @@ class _StopWatchClockState extends State<StopWatchClock>
                 ])),
           ),
           SizedBox.square(
-            dimension: _size.width * .35,
+            dimension: size.width * .35,
             child: Container(
                 decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    boxShadow: [
+                    boxShadow: <BoxShadow>[
                   BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0, 0),
-                      blurRadius: 1,
-                      spreadRadius: .1),
+                      color: Colors.grey, blurRadius: 1, spreadRadius: .1),
                   BoxShadow(
                       color: Colors.white,
                       offset: Offset(-1, -1),
@@ -111,10 +106,10 @@ class _StopWatchClockState extends State<StopWatchClock>
                 ])),
           ),
           SizedBox.square(
-            dimension: _size.width * .45,
+            dimension: size.width * .45,
             child: AnimatedBuilder(
               animation: widget.controller,
-              builder: (context, animation) {
+              builder: (BuildContext context, Widget? animation) {
                 return Transform(
                   alignment: FractionalOffset.center,
                   transform: Matrix4.identity()
@@ -127,7 +122,7 @@ class _StopWatchClockState extends State<StopWatchClock>
             ),
           ),
           Text(
-            stopWatchFormat(_time),
+            stopWatchFormat(time),
             style: Theme.of(context).textTheme.headline4!.copyWith(
                   letterSpacing: 1.2,
                   fontWeight: FontWeight.bold,

@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:stopwatch/app/widgets/stopwatch/lap_cards.dart';
+import '../app/widgets/stopwatch/lap_cards.dart';
 
 typedef CurrentStopWatchTime = Duration;
 
 class StopWatchContext extends ChangeNotifier {
   final Tween<Offset> _offset =
-      Tween<Offset>(begin: const Offset(0, -1), end: const Offset(0, 0));
+      Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero);
   final Tween<double> _opacity = Tween<double>(begin: 0, end: 1);
   final GlobalKey<AnimatedListState> _globalKey =
       GlobalKey<AnimatedListState>();
-  final List<CurrentStopWatchTime> _laps = [];
+  final List<CurrentStopWatchTime> _laps = <CurrentStopWatchTime>[];
 
   GlobalKey<AnimatedListState> get key => _globalKey;
 
@@ -25,10 +25,10 @@ class StopWatchContext extends ChangeNotifier {
   bool get isStopWatchRunning => _isStopWatchRunning;
   bool get isWatchTicking => !_watchIsPaused;
 
-  Duration _duration = const Duration();
+  Duration _duration = Duration.zero;
 
   Stream<CurrentStopWatchTime>? get getStopWatch =>
-      Stream.periodic(const Duration(milliseconds: 1000), (_) {
+      Stream<Duration>.periodic(const Duration(milliseconds: 1000), (_) {
         if (_isStopWatchRunning) {
           final int seconds = _duration.inSeconds + (!_watchIsPaused ? 1 : 0);
           _duration = CurrentStopWatchTime(seconds: seconds);
@@ -38,24 +38,24 @@ class StopWatchContext extends ChangeNotifier {
           }
           return _duration;
         }
-        return const Duration();
+        return Duration.zero;
       });
 
   void stopTheWatch() {
     _isStopWatchRunning = false;
-    _duration = const Duration();
-    for (Duration lap in _laps) {
+    _duration = Duration.zero;
+    for (final Duration lap in _laps) {
       if (_globalKey.currentState != null) {
         _globalKey.currentState!.removeItem(
           0,
-          (context, animation) {
+          (BuildContext context, Animation<double> animation) {
             return SlideTransition(
               position: animation.drive(_offset),
               child: FadeTransition(
                 opacity: animation.drive(_opacity),
                 child: StopWatchLapsCard(
                   lapNumber: _laps.indexOf(lap),
-                  time: const Duration(),
+                  time: Duration.zero,
                 ),
               ),
             );
@@ -78,14 +78,15 @@ class StopWatchContext extends ChangeNotifier {
 
   void removeLap(int index) {
     if (_globalKey.currentState != null) {
-      _globalKey.currentState!.removeItem(index, (context, animation) {
+      _globalKey.currentState!.removeItem(index,
+          (BuildContext context, Animation<double> animation) {
         return SlideTransition(
           position: animation.drive(_offset),
           child: FadeTransition(
             opacity: animation.drive(_opacity),
             child: StopWatchLapsCard(
               lapNumber: index,
-              time: const Duration(),
+              time: Duration.zero,
             ),
           ),
         );

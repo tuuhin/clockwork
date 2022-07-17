@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/widgets/clock/clock_painter.dart';
-import 'package:stopwatch/context/context.dart';
 import 'package:vector_math/vector_math.dart' show radians;
+
+import '../../../context/context.dart';
+import 'clock_painter.dart';
 
 class AnalogClock extends StatefulWidget {
   const AnalogClock({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _AnalogClockState extends State<AnalogClock>
     _rotation =
         Tween<double>(begin: 0.0, end: 360).animate(_animationController);
 
-    _animationController.addStatusListener((status) {
+    _animationController.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {
         _animationController.repeat();
       } else if (status == AnimationStatus.dismissed) {
@@ -44,20 +45,20 @@ class _AnalogClockState extends State<AnalogClock>
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
-    final ClockTime _clck = Provider.of<ClockTime>(context);
+    final Size size = MediaQuery.of(context).size;
+    final ClockTime clck = Provider.of<ClockTime>(context);
     return SizedBox(
-      height: _size.height * 0.35,
+      height: size.height * 0.35,
       child: Stack(
         alignment: Alignment.center,
-        children: [
+        children: <Widget>[
           SizedBox.square(
-            dimension: _size.width * .6,
+            dimension: size.width * .6,
             child: Container(
               decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
-                  boxShadow: [
+                  boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: Colors.grey,
                         offset: Offset(2, 2),
@@ -68,11 +69,11 @@ class _AnalogClockState extends State<AnalogClock>
           ),
           AnimatedBuilder(
               animation: _animationController,
-              builder: (context, animation) {
+              builder: (BuildContext context, Widget? animation) {
                 return Transform.rotate(
                   angle: radians(_rotation.value),
                   child: SizedBox.square(
-                    dimension: _size.width * 0.56,
+                    dimension: size.width * 0.56,
                     child: CustomPaint(
                       painter: ClockPainterDial(),
                     ),
@@ -80,15 +81,12 @@ class _AnalogClockState extends State<AnalogClock>
                 );
               }),
           SizedBox.square(
-              dimension: _size.width * 0.45,
+              dimension: size.width * 0.45,
               child: Container(
                 decoration: const BoxDecoration(
-                  boxShadow: [
+                  boxShadow: <BoxShadow>[
                     BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0, 0),
-                        blurRadius: 1,
-                        spreadRadius: .1),
+                        color: Colors.grey, blurRadius: 1, spreadRadius: .1),
                     BoxShadow(
                         color: Colors.white,
                         offset: Offset(1, 1),
@@ -100,10 +98,10 @@ class _AnalogClockState extends State<AnalogClock>
                 ),
               )),
           SizedBox.square(
-            dimension: _size.width * 0.4,
+            dimension: size.width * 0.4,
             child: CustomPaint(
               painter: ClockMainPainter(
-                current: _clck,
+                current: clck,
               ),
             ),
           ),

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/app/widgets/app_widgets.dart';
-import 'package:stopwatch/app/widgets/clock/small_clock_painter.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/domain/models/detailed_timezone_model.dart';
-import 'package:stopwatch/utils/time_formatter.dart';
+
+import '../../../context/context.dart';
+import '../../../domain/models/detailed_timezone_model.dart';
+import '../../../utils/time_formatter.dart';
+import '../app_widgets.dart';
+import 'small_clock_painter.dart';
 
 class ClockCard extends StatefulWidget {
-  final DetailedTimeZoneModel zone;
   const ClockCard({Key? key, required this.zone}) : super(key: key);
+  final DetailedTimeZoneModel zone;
 
   @override
   State<ClockCard> createState() => _ClockCardState();
@@ -26,25 +27,25 @@ class _ClockCardState extends State<ClockCard> {
   @override
   Widget build(BuildContext context) {
     Provider.of<ClockTime>(context);
-    DateTime _current = getime(widget.zone.offset);
-    bool _isDay = _current.hour >= 6 && _current.hour <= 16;
+    final DateTime current = getime(widget.zone.offset);
+    final bool isDay = current.hour >= 6 && current.hour <= 16;
     return Dismissible(
+      confirmDismiss: (DismissDirection direction) async => true,
       direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) async {
-        return true;
-      },
-      onDismissed: (direction) {
+      onDismissed: (DismissDirection direction) {
         _timeZoneContext.removeIndividualModel(widget.zone);
       },
       background: Card(
           color: Colors.black,
-          child: Row(mainAxisAlignment: MainAxisAlignment.end, children: const [
-            Icon(
-              Icons.delete_outline,
-              color: Colors.white,
-            ),
-            SizedBox(width: 20)
-          ])),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: const <Widget>[
+                Icon(
+                  Icons.delete_outline,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 20)
+              ])),
       key: ObjectKey(widget.zone),
       child: Card(
         borderOnForeground: false,
@@ -55,17 +56,17 @@ class _ClockCardState extends State<ClockCard> {
             width: 40,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: _isDay
-                      ? [Colors.grey, Colors.white54]
-                      : [Colors.black, Colors.black54],
+                  colors: isDay
+                      ? <Color>[Colors.grey, Colors.white54]
+                      : <Color>[Colors.black, Colors.black54],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight),
               shape: BoxShape.circle,
             ),
             child: CustomPaint(
               painter: SmallClockPainter(
-                current: _current,
-                dialColor: _isDay ? Colors.black : Colors.white,
+                current: current,
+                dialColor: isDay ? Colors.black : Colors.white,
               ),
             ),
           ),

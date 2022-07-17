@@ -4,6 +4,13 @@ part 'timezone_model.g.dart';
 
 @HiveType(typeId: 01)
 class TimeZoneModel extends HiveObject {
+  TimeZoneModel(
+      {this.region,
+      required this.area,
+      required this.location,
+      required this.endpoint,
+      this.offset = 0,
+      this.isSelected = false});
   @HiveField(0)
   String area;
 
@@ -22,18 +29,12 @@ class TimeZoneModel extends HiveObject {
   @HiveField(5)
   int offset;
 
-  TimeZoneModel(
-      {this.region,
-      required this.area,
-      required this.location,
-      required this.endpoint,
-      this.offset = 0,
-      this.isSelected = false});
-
+  // ignore: avoid_setters_without_getters
   set changeSelectMode(bool isSelected) {
     isSelected = isSelected;
   }
 
+  // ignore: avoid_setters_without_getters
   set newOffset(int offset) {
     offset = offset;
   }

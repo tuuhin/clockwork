@@ -1,73 +1,67 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:stopwatch/domain/models/models.dart';
+import '../../domain/models/models.dart';
 
 class WorldTimeApiClient {
   String baseURL = 'http://worldtimeapi.org/api/timezone';
 
-  Future<Map?> getTimeZoneInfo(TimeZoneModel timeZone) async {
-    Uri endpoint = Uri.parse(baseURL + '/' + timeZone.endpoint);
-    http.Response _resp = await http.get(endpoint);
-    if (_resp.statusCode == 200) {
-      Map _data = jsonDecode(_resp.body) as Map;
-      return _data;
+  Future<Map<String, dynamic>?> getTimeZoneInfo(TimeZoneModel timeZone) async {
+    final Uri endpoint = Uri.parse('$baseURL/${timeZone.endpoint}');
+    final http.Response resp = await http.get(endpoint);
+    if (resp.statusCode == 200) {
+      return jsonDecode(resp.body) as Map<String, dynamic>;
     }
     return null;
   }
 
-  Future<List?> _getTimeZones() async {
-    final Uri _uri = Uri.parse(baseURL);
+  Future<List<dynamic>?> _getTimeZones() async {
+    final Uri uri = Uri.parse(baseURL);
     try {
-      http.Response _resp =
-          await http.get(_uri).timeout(const Duration(seconds: 10));
-
-      if (_resp.statusCode == 200) {
-        List _timeZones = jsonDecode(_resp.body) as List;
-        return _timeZones;
-      } else {
-        throw http.ClientException;
+      final http.Response resp = await http.get(uri);
+      if (resp.statusCode == 200) {
+        return jsonDecode(resp.body) as List<dynamic>;
       }
     } on SocketException {
-      print('socket exception ');
+      debugPrint('socket exception ');
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
     return null;
   }
 
   TimeZoneModel? zoneToModel(String endpoint) {
-    List<String> _enties = endpoint.split('/');
-    if (_enties.length == 2) {
+    final List<String> enties = endpoint.split('/');
+    if (enties.length == 2) {
       return TimeZoneModel(
-        area: _enties[0],
-        location: _enties[1],
+        area: enties[0],
+        location: enties[1],
         endpoint: endpoint,
       );
     }
-    if (_enties.length == 3) {
+    if (enties.length == 3) {
       return TimeZoneModel(
-          area: _enties[0],
-          location: _enties[1],
-          region: _enties[2],
+          area: enties[0],
+          location: enties[1],
+          region: enties[2],
           endpoint: endpoint);
     }
     return null;
   }
 
-  List<TimeZoneModel> _parsedModels(List? zones) {
+  List<TimeZoneModel> _parsedModels(List<dynamic>? zones) {
     if (zones != null) {
       return zones
-          .map((e) => zoneToModel(e))
+          .map<TimeZoneModel?>((dynamic e) => zoneToModel(e.toString()))
           .whereType<TimeZoneModel>()
           .toList();
     }
-    return [];
+    return <TimeZoneModel>[];
   }
 
   Future<List<TimeZoneModel>> getZones() async {
-    List? _zones = await _getTimeZones();
-    List<TimeZoneModel> parsedData = _parsedModels(_zones);
-    return parsedData;
+    final List<dynamic>? zones = await _getTimeZones();
+    return _parsedModels(zones);
   }
 }

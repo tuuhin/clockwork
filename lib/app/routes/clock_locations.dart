@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stopwatch/context/context.dart';
-import 'package:stopwatch/domain/models/models.dart';
+
+import '../../context/context.dart';
+import '../../domain/models/models.dart';
 
 class ClockLocations extends StatefulWidget {
   const ClockLocations({Key? key}) : super(key: key);
@@ -50,7 +51,7 @@ class _ClockLocationsState extends State<ClockLocations> {
     super.dispose();
   }
 
-  void selectCity(TimeZoneModel zone) async {
+  Future<void> selectCity(TimeZoneModel zone) async {
     FocusScope.of(context).requestFocus(FocusNode());
     Navigator.of(context)
       ..pop()
@@ -68,7 +69,7 @@ class _ClockLocationsState extends State<ClockLocations> {
 
   void loadInfoDialog(TimeZoneModel? zoneModel) => showDialog(
       context: context,
-      builder: (context) {
+      builder: (BuildContext context) {
         return AlertDialog(
           titlePadding: const EdgeInsets.symmetric(horizontal: 15),
           title: ListTile(
@@ -78,7 +79,7 @@ class _ClockLocationsState extends State<ClockLocations> {
                 ? Text(zoneModel.location)
                 : Text(zoneModel.region ?? ''),
           ),
-          actions: [
+          actions: <Widget>[
             TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('CANCEL')),
@@ -99,14 +100,14 @@ class _ClockLocationsState extends State<ClockLocations> {
   void removeAllDialog() {
     showDialog(
         context: context,
-        builder: (context) {
+        builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Clear all the selected cities'),
             content: Text(
               'Remove all the selected cities ,the old selected cities are need to be selected again to view',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            actions: [
+            actions: <Widget>[
               TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: const Text('CANCEL')),
@@ -124,7 +125,7 @@ class _ClockLocationsState extends State<ClockLocations> {
 
   @override
   Widget build(BuildContext context) {
-    final List<TimeZoneModel?> _zones =
+    final List<TimeZoneModel?> zones =
         Provider.of<List<TimeZoneModel?>>(context);
 
     return WillPopScope(
@@ -136,7 +137,7 @@ class _ClockLocationsState extends State<ClockLocations> {
         appBar: AppBar(
           toolbarHeight: 64.0,
           title: Column(
-            children: [
+            children: <Widget>[
               Text('Select City', style: Theme.of(context).textTheme.headline5),
               Text('Time zones',
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -144,7 +145,7 @@ class _ClockLocationsState extends State<ClockLocations> {
                       ))
             ],
           ),
-          actions: [
+          actions: <Widget>[
             IconButton(
                 onPressed: removeAllDialog,
                 icon: const Icon(Icons.delete_outlined))
@@ -155,7 +156,7 @@ class _ClockLocationsState extends State<ClockLocations> {
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
                 cursorColor: Colors.black,
-                onChanged: ((value) => setState(() => filter = value)),
+                onChanged: (String value) => setState(() => filter = value),
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.search),
                   hintText: 'Search for a country or city',
@@ -167,12 +168,13 @@ class _ClockLocationsState extends State<ClockLocations> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: _zones.isNotEmpty
+          child: zones.isNotEmpty
               ? ListView(
                   controller: _scrollController,
-                  children: [
-                    ..._zones
-                        .where((element) => element!.region == null
+                  children: <Widget>[
+                    ...zones
+                        .where((TimeZoneModel? element) => element!.region ==
+                                null
                             ? element.location.toLowerCase().contains(filter)
                             : element.region!.contains(filter))
                         .map((TimeZoneModel? zone) => ListTile(
