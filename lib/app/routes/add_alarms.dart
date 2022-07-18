@@ -28,11 +28,12 @@ class _AddAlarmState extends State<AddAlarm> {
   String _relative = 'now';
 
   void _onTimeChange(DateTime time) {
-    at = time.subtract(Duration(seconds: time.second, days: 5));
+    at = time.subtract(Duration(seconds: time.second));
 
-    setState(() => _relative =
-        RelativeDateFormat(Localizations.localeOf(context))
-            .format(RelativeDateTime(dateTime: DateTime.now(), other: time)));
+    setState(
+      () => _relative = RelativeDateFormat(Localizations.localeOf(context))
+          .format(RelativeDateTime(dateTime: DateTime.now(), other: time)),
+    );
   }
 
   void _addAlarm() {
